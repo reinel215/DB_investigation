@@ -1,5 +1,5 @@
 //Import de las rutas.
-const RouterPrincipal= require('./routes/principal_route.js/index.js');
+const RouterPrincipal= require('./routes/principal_route.js');
 //Ruta principal para direccion de la pagina web.
 const appRoute = require('./routes/app_route.js');
 //Ruta de acceso principal a la aplicacion.

@@ -2,7 +2,7 @@ var webpack = require('webpack');
 var path = require('path')
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry : {
     principal: path.resolve(__dirname, 'scripts') +'/react-p/indexPrincipal.js',
   },

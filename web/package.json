@@ -4,7 +4,8 @@
   "description": "Pagina web de acceso para manipulacion y planificacion de proyectos de investigacion, asi mismo de desarrollo de los mismos y analisis. Esta destinado a una actividad mas dinamica con el entorno academico y rigido de la practica de la investigacion, permitiendo ademas un desarrollo adecuado teniendo conocimiento de las distintas practicas holopraxicas de la misma.",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js"
+    "start": "npm run-script webpack && node index.js",
+    "webpack": "webpack --mode development"
   },
   "repository": {
     "type": "git",
@@ -18,5 +19,40 @@
   "bugs": {
     "url": "https://github.com/reinel215/DB_investigation/issues"
   },
-  "homepage": "https://github.com/reinel215/DB_investigation#readme"
+  "homepage": "https://github.com/reinel215/DB_investigation#readme",
+  "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "body-parser": "^1.18.3",
+    "express-session": "^1.16.1",
+    "fs": "0.0.1-security",
+    "node-fetch": "^2.3.0",
+    "path": "^0.12.7",
+    "react": "^16.8.3",
+    "react-css-transition": "^0.7.4",
+    "react-dev-tools": "0.0.1",
+    "react-dom": "^16.8.3",
+    "react-transition-group": "^2.6.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-middleware": "^3.6.0",
+    "webpack-dev-server": "^3.2.1"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.3.2",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.5",
+    "bootstrap": "^4.0.0-beta",
+    "express": "^4.16.4",
+    "jquery": "^3.3.1",
+    "popper.js": "^1.14.7",
+    "react-scripts": "^2.1.8",
+    "webpack": "^4.29.6",
+    "webpack-dev-middleware": "^3.6.0",
+    "webpack-dev-server": "^3.2.1"
+  }
 }
