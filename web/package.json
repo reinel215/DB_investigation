@@ -1,0 +1,22 @@
+{
+  "name": "db_investigation",
+  "version": "1.0.0",
+  "description": "Pagina web de acceso para manipulacion y planificacion de proyectos de investigacion, asi mismo de desarrollo de los mismos y analisis. Esta destinado a una actividad mas dinamica con el entorno academico y rigido de la practica de la investigacion, permitiendo ademas un desarrollo adecuado teniendo conocimiento de las distintas practicas holopraxicas de la misma.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reinel215/DB_investigation.git"
+  },
+  "keywords": [
+    "Investigation"
+  ],
+  "author": "Kiddo - Pedro Faria, Maria Gabriela y Reinel Adrian",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/reinel215/DB_investigation/issues"
+  },
+  "homepage": "https://github.com/reinel215/DB_investigation#readme"
+}
