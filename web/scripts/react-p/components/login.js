@@ -14,43 +14,50 @@ class Login extends Component {
     }
 
     handleChangeEmail(event){
-        this.setState((state,props) => ({
+        this.setState({
             email: event.target.value,
-            password: state.password
-        }));
+            password: this.state.password
+        });
     }
 
     handleChangePassword(event){
-        this.setState((state,props) => ({
-            email: state.email,
+        this.setState({
+            email: this.state.email,
             password: event.target.value
-        }));
+        });
     }
 
     render(){
 
         /* 
-            Seccion del codigo para tomar el error por respuesta del mismo. Se usa el props al hacer el pase.
+        Seccion del codigo para tomar el error por respuesta del mismo. Se usa el props al hacer el pase.
         
-       const error=('');
+        const error=('');
         if (!this.props.log)
             error= (<div className="d-flex container-fluid justify-content-center">
                 <span className="badge badge-danger">Usuario o clave inválida</span>
             </div>);
-        */    
+        */
 
         return(
-        <form action="/login" method="POST">
-            <div className="form-group">
-                <label for="email">Email</label>
-                <input type="text" name="email" placeholder="Email" id="email" class="form-control" onChange="Metodo de cambio para el estado" value={this.state.email}></input>
-            </div>
-            <div className="form-group">
-                <label for="password">Password</label>
-                <input type="text" name="password" placeholder="Password" id="password" class="form-control" onChange="Metodo de cambio para el estado" value={this.state.password}></input>
-            </div>
-            <button type="submit" className="btn btn-primary">Submit</button>
-        </form>
+        <div className="card card-body card-pad">
+            <form action="/login" method="POST">
+                <div className="form-log">
+                    <div className="form-group">
+                        <label for="email">Email</label>
+                        <input type="text" name="email" placeholder="Email" id="email" className="form-control" onChange={this.handleChangeEmail} value={this.state.email}></input>
+                    </div>
+                    <div className="form-group">
+                        <label for="password">Password</label>
+                        <input type="text" name="password" placeholder="Password" id="password" className="form-control" onChange={this.handleChangePassword} value={this.state.password}></input>
+                    </div>
+                </div>
+                <div className="row d-flex justify-content-center">
+                    <button type="submit" className="btn btn-primary">Sign-In</button>
+                    <button type="submit" className="btn btn-sp btn-primary">Sign-Up</button>
+                </div>
+            </form>
+        </div>
         );
     }
 
