@@ -28,6 +28,7 @@
     animation: insertion 0.5s;
     animation-iteration-count: 1;
     font-family: 'Roboto', sans-serif;
+    border-radius: 0px;
 }
 
 @keyframes insertion{
