@@ -7,7 +7,7 @@ class Principal extends Component {
 
     return(
       <div className="container-fluid bg-p row align-items-center">
-        <div className="container col-sm-4 d-flex justify-content-center">
+        <div className="container col-sm-3 d-flex justify-content-center">
               <Login></Login>
         </div>
       </div>
