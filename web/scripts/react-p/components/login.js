@@ -61,21 +61,21 @@ class Login extends Component {
         */
 
         return(
-        <div className="card card-body card-pad" onMouseEnter={this.handleHoover} onMouseLeave={this.handleHoover2}>
+        <div className="col-6 card card-body card-pad" onMouseEnter={this.handleHoover} onMouseLeave={this.handleHoover2}>
             <form action="/login" method="POST">
                 <div className={this.state.render}>
                     <div className="form-group">
-                        <label for="email">Email</label>
+                        <label className="roboto font-weight-bold" for="email font-weight-bold">Email</label>
                         <input type="text" name="email" placeholder="Email" id="email" className="form-control" onChange={this.handleChangeEmail} value={this.state.email}></input>
                     </div>
                     <div className="form-group">
-                        <label for="password">Password</label>
+                        <label className="roboto font-weight-bold" for="password">Password</label>
                         <input type="text" name="password" placeholder="Password" id="password" className="form-control" onChange={this.handleChangePassword} value={this.state.password}></input>
                     </div>
                 </div>
                 <div className="row d-flex justify-content-center">
-                    <button type="submit" className="btn btn-info btn-sp col-sm-6">Sign-In</button>
-                    <button type="submit" className="btn btn-info btn-sp col-sm-6">Sign-Up</button>
+                    <button type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6">Sign-In</button>
+                    <button type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6">Sign-Up</button>
                 </div>
             </form>
         </div>

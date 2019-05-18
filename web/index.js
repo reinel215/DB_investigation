@@ -3,6 +3,7 @@ const RouterPrincipal= require('./routes/principal_route.js');
 //Ruta principal para direccion de la pagina web.
 const appRoute = require('./routes/app_route.js');
 //Ruta de acceso principal a la aplicacion.
+const login= require('./middlewares/session.js');
 //Modulo de manejo de servidor backend express
 const express = require("express");
 //Parser del contenido de peticiones.
@@ -37,10 +38,12 @@ app.use(session({
   resave: false,
   //La sesion debe guardarse aun cuando no ha sido no inicializada, una sesion no inicializada significa que es nueva pero no modificada. Reduce el store colocarla en false.
   saveUninitialized: false
-}))
+}));
+app.set("view engine", "jade");
 
 //Enrutamientos
 app.use("/",RouterPrincipal);
+app.use("/login",login);
 app.use("/app",appRoute);
 
 //Meta data para los contenidos de la pagina

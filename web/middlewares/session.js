@@ -2,7 +2,7 @@
 module.exports = function(req, res, next){
   //el next representa el siguiente middleware.
   if(!req.session.user_id){
-    res.redirect("/login");
+    res.redirect("/");
   }
   else{
     next();

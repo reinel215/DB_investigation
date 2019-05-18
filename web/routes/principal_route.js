@@ -7,7 +7,8 @@ var repositorios= [];
 
 //Respuesta del primer acceso.
 RouterPrincipal.get("/", (req, res) =>{
-  res.sendFile(path.join(__dirname +'\/..\/views\/index.html'));
+  //res.sendfile(path.join(__dirname +'\/..\/views\/index.html'));
+  res.render("index");
 });
 
 /*
