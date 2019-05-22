@@ -27,14 +27,17 @@
 
 .form-log{
     height: 0px;
+    opacity: 0;
     transform: scale(0);
-    transition: transform 0.2s linear, height 0.2s linear;
+    transition: height 0.4s linear, opacity 0.2s ease-in;
+    overflow: hidden
 }
 
 .form-log-active{
     height: 100%;
+    opacity: 1;
     transform: scale(1);
-    transition: transform 0.2s linear, height 0.2s linear;
+    transition: height 0.2s linear, opacity 0.4s ease-in-out;
 }
 
 .card-pad{

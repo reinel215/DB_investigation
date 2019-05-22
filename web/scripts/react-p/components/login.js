@@ -74,16 +74,14 @@ class Login extends Component {
 
         const login= (
                     <div className="col-6 card card-body card-pad" onMouseEnter={this.handleHoover} onMouseLeave={this.handleHooverOut}>
-                        <form action="/login" method="POST">
-                            <div className={this.state.render}>
-                                <div className="form-group">
-                                    <label className="roboto font-weight-bold" for="email font-weight-bold">Email</label>
-                                    <input type="text" name="email" placeholder="Email" id="email" className="form-control" onChange={this.handleChangeEmail} value={this.state.email} required autofocus></input>
-                                </div>
-                                <div className="form-group">
-                                    <label className="roboto font-weight-bold" for="password">Password</label>
-                                    <input type="text" name="password" placeholder="Password" id="password" className="form-control" onChange={this.handleChangePassword} value={this.state.password} required></input>
-                                </div>
+                        <form className={this.state.render} action="/login" method="POST">
+                            <div className="form-group">
+                                <label className="roboto font-weight-bold" for="email font-weight-bold">Email</label>
+                                <input type="text" name="email" placeholder="Email" id="email" className="form-control" onChange={this.handleChangeEmail} value={this.state.email} required autofocus></input>
+                            </div>
+                            <div className="form-group">
+                                <label className="roboto font-weight-bold" for="password">Password</label>
+                                <input type="text" name="password" placeholder="Password" id="password" className="form-control" onChange={this.handleChangePassword} value={this.state.password} required></input>
                             </div>
                             <div className="row d-flex justify-content-center">
                                 <button type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6">Sign-In</button>
