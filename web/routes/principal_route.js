@@ -6,9 +6,26 @@ const RouterPrincipal = express.Router();
 var repositorios= [];
 
 //Respuesta del primer acceso.
-RouterPrincipal.get("/", (req, res) =>{
-  //res.sendfile(path.join(__dirname +'\/..\/views\/index.html'));
-    res.render("index");
+RouterPrincipal.get("/login", (req, res) =>{
+    res.sendFile(path.join(__dirname +'\/..\/views\/index.html'));
+});
+
+RouterPrincipal.get("/validate", (req, res) => {
+    if (req.session.validacion_num > 0){
+      res.send({status : true});
+    }
+    else{
+      res.send({status: false});
+    }
+});
+
+RouterPrincipal.post("/ingreso", (req, res) => {
+    //validacion de ingreso
+    if (req.session.validacion_num)
+      req.session.validacion_num= req.session.validacion_num + 1;
+    else 
+      req.session.validacion_num= 1;
+    res.redirect("/login");
 });
 
 /*

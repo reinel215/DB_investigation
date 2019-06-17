@@ -10,7 +10,8 @@ class Login extends Component {
         this.state={
             email:'',
             password:'',
-            render: 'form-log'
+            render: 'form-log',
+            status: false
         };
 
         this.handleChangeEmail = this.handleChangeEmail.bind(this);
@@ -23,7 +24,8 @@ class Login extends Component {
         this.setState({
             email: event.target.value,
             password: this.state.password,
-            render: this.state.render
+            render: this.state.render,
+            status: this.state.status
         });
     }
 
@@ -31,7 +33,8 @@ class Login extends Component {
         this.setState({
             email: this.state.email,
             password: event.target.value,
-            render: this.state.render
+            render: this.state.render,
+            status: this.state.status
         });
     }
 
@@ -39,7 +42,8 @@ class Login extends Component {
         this.setState({
             email: this.state.email,
             password: event.target.value,
-            render: "form-log-active"
+            render: "form-log-active",
+            status: this.state.status
         });
     }
 
@@ -47,34 +51,42 @@ class Login extends Component {
         this.setState({
             email: this.state.email,
             password: event.target.value,
-            render: "form-log"
-        });
-    }
-
-    loginStatus(){
-        let sPageUrl= window.location.search.substring(1);
-        let variables= sPageUrl.split('&');
-        variables.forEach((item) => {
-            if(item === 'statusLog')
-                return (<div></div>);
+            render: "form-log",
+            status: this.state.status
         });
     }
 
     render(){
-
-        /* 
-        Seccion del codigo para tomar el error por respuesta del mismo. Se usa el props al hacer el pase.
         
-        const error=('');
-        if (!this.props.log)
-            error= (<div className="d-flex container-fluid justify-content-center">
-                <span className="badge badge-danger">Usuario o clave inválida</span>
-            </div>);
-        */
+        var error= null;
+        if (!this.state.status){
+            fetch('/validate').then(
+                    res => {
+                        if (res.status == 200)
+                            return res.json()
+                        else
+                            return null;
+                    }).then(
+                        json => {
+                            if (json.status){
+                                this.setState({
+                                    email: '',
+                                    password: '',
+                                    render: "form-log",
+                                    status: true
+                                });
+                            }
+                        }
+                    );
+        }
+        else
+            error= (<div className="row d-flex justify-content-center">
+                        <span class="badge badge-danger mt-3"> Intento de conexion fallido, intente denuevo.</span>
+                    </div>);
 
         const login= (
-                    <div className="col-6 card card-body card-pad" onMouseEnter={this.handleHoover} onMouseLeave={this.handleHooverOut}>
-                        <form className={this.state.render} action="/login" method="POST">
+                    <div>
+                        <form className={this.state.render} action="/ingreso" method="POST">
                             <div className="form-group">
                                 <label className="roboto font-weight-bold" for="email font-weight-bold">Email</label>
                                 <input type="text" name="email" placeholder="Email" id="email" className="form-control" onChange={this.handleChangeEmail} value={this.state.email} required autofocus></input>
@@ -89,12 +101,15 @@ class Login extends Component {
                         </form>
                         <div className="row d-flex justify-content-center">
                             <button type="" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6">Sign-Up</button>
+                            {error}
                         </div>
                     </div>
         );
 
         return(
-            login
+            <div className="col-6 card card-body card-pad" onMouseEnter={this.handleHoover} onMouseLeave={this.handleHooverOut}>
+                {login}
+            </div>
         );
     }
 

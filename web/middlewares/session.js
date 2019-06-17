@@ -2,7 +2,7 @@
 module.exports = function(req, res, next){
   //el next representa el siguiente middleware.
   if(!req.session.user_id){
-    res.send({invalidacion: 'Usuario o contrasena invalida'});
+    res.redirect('/login');
   }
   else{
     next();

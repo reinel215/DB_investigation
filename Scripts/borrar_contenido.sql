@@ -1,5 +1,6 @@
 DELETE FROM Tipo_Estadio_Estructural;
-DELETE FROM tipo_usuario;
+DELETE FROM Forma_Analisis;
+DELETE FROM Tipo_Usuario;
 DELETE FROM Permiso;
 DELETE FROM Rol;
 DELETE FROM Usuario;

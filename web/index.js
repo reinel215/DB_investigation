@@ -2,8 +2,6 @@
 const RouterPrincipal= require('./routes/principal_route.js');
 //Ruta principal para direccion de la pagina web.
 const appRoute = require('./routes/app_route.js');
-//Ruta de acceso principal a la aplicacion.
-const login= require('./middlewares/session.js');
 //Modulo de manejo de servidor backend express
 const express = require("express");
 //Parser del contenido de peticiones.
@@ -16,6 +14,7 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const config = require('./webpack.config.js');
 //Compilacion del webpack config para su uso en el middleware dentro del servidor.
 const compiler = webpack(config);
+const middleware_session = require('./middlewares/session.js');
 var session = require("express-session");
 //Session es el metodo para asignar la cookie de inicio de sesion. un Id especifico para su entrada.
 
@@ -43,8 +42,9 @@ app.set("view engine", "jade");
 
 //Enrutamientos
 app.use("/",RouterPrincipal);
-app.use("/login",login);
 app.use("/app",appRoute);
+
+app.use("/",middleware_session);
 
 //Meta data para los contenidos de la pagina
 

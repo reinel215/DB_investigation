@@ -594,7 +594,7 @@ ON UPDATE NO ACTION ON DELETE NO ACTION;
 CREATE TABLE Tipo_Argumentacion (
 	id_tipo_argumentacion SERIAL,
 	nombre VARCHAR(50) NOT NULL,
-	descripcion VARCHAR(100) NOT NULL,
+	descripcion VARCHAR(500) NOT NULL,
 	
 	PRIMARY KEY (id_tipo_argumentacion)
 );
@@ -866,7 +866,7 @@ ON UPDATE NO ACTION ON DELETE NO ACTION;
 CREATE TABLE Pregunta_Modular(
 	id_pregunta_modular SERIAL,
 	id_tipo_investigacion INT NOT NULL,
-	contenido VARCHAR(100) NOT NULL,
+	contenido VARCHAR(500) NOT NULL,
 	
 	PRIMARY KEY (id_pregunta_modular),
 	
@@ -995,7 +995,7 @@ CREATE TABLE Estadio_Estructural(
 	id_modalidad INT NOT NULL,
 	id_tipo_estadio_estructural INT NOT NULL,
 	id_obligatoriedad INT NOT NULL,
-	descripcion VARCHAR(100) NOT NULL,
+	descripcion VARCHAR(500) NOT NULL,
 	posicion INT NOT NULL,
 	
 	PRIMARY KEY (id_estadio_estructural),
@@ -1186,7 +1186,7 @@ ON UPDATE NO ACTION ON DELETE NO ACTION;
 
 CREATE TABLE Objetivo_Estadial(
 	id_objetivo_estadial SERIAL,
-	tipo VARCHAR(50) NOT NULL,
+	tipo VARCHAR(100) NOT NULL,
 	
 	PRIMARY KEY (id_objetivo_estadial)
 );
@@ -1361,7 +1361,6 @@ CREATE TABLE Evento(
 	id_clase_evento INT NOT NULL,
 	id_abordaje INT NOT NULL,
 	id_tipo_evento INT NOT NULL,
-	id_tecnica_analisis INT NOT NULL,
 	id_estadio_aplicado INT NOT NULL,
 	nombre VARCHAR(100) NOT NULL,
 	descripcion VARCHAR(500) NOT NULL,
@@ -1380,10 +1379,6 @@ CREATE TABLE Evento(
 	REFERENCES Tipo_Evento(id_tipo_evento) MATCH SIMPLE
 	ON UPDATE NO ACTION ON DELETE NO ACTION,
 	
-	CONSTRAINT fk_tecnica_analisis_evento FOREIGN KEY (id_tecnica_analisis) 
-	REFERENCES Tecnica_Analisis(id_tecnica_analisis) MATCH SIMPLE
-	ON UPDATE NO ACTION ON DELETE NO ACTION,
-	
 	CONSTRAINT fk_estadio_aplicado_evento FOREIGN KEY (id_estadio_aplicado) 
 	REFERENCES Estadio_Aplicado(id_estadio_aplicado) MATCH SIMPLE
 	ON UPDATE NO ACTION ON DELETE NO ACTION
@@ -1394,7 +1389,7 @@ SELECT * FROM Evento;
 DROP TABLE Evento;
 
 INSERT INTO Evento (id_clase_evento, id_abordaje, id_tipo_evento, id_tecnica_analisis, id_estadio_aplicado, nombre, descripcion) 
-	VALUES (1, 1, 1, 1, 1,'Epale', 'fino todo');
+	VALUES (1, 1, 1, 1,'Epale', 'fino todo');
 
 DELETE FROM Evento;
 
@@ -1423,19 +1418,50 @@ REFERENCES Tipo_Evento(id_tipo_evento) MATCH SIMPLE
 ON UPDATE NO ACTION ON DELETE NO ACTION;
 
 ALTER TABLE Evento
-DROP CONSTRAINT fk_tecnica_analisis_evento;
-
-ALTER TABLE Evento
-ADD CONSTRAINT fk_tecnica_analisis_evento FOREIGN KEY (id_tecnica_analisis) 
-REFERENCES Tecnica_Analisis(id_tecnica_analisis) MATCH SIMPLE
-ON UPDATE NO ACTION ON DELETE NO ACTION;
-
-ALTER TABLE Evento
 DROP CONSTRAINT fk_estadio_aplicado_evento;
 
 ALTER TABLE Evento
 ADD CONSTRAINT fk_estadio_aplicado_evento FOREIGN KEY (id_estadio_aplicado) 
 REFERENCES Estadio_Aplicado(id_estadio_aplicado) MATCH SIMPLE
+ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+CREATE TABLE Forma_Analisis(
+	id_forma_analisis SERIAL,
+	id_tecnica_analisis INT NOT NULL,
+	id_evento INT NOT NULL,
+	
+	PRIMARY KEY (id_evento),
+	
+	CONSTRAINT fk_evento_forma_analisis FOREIGN KEY (id_evento) 
+	REFERENCES Evento(id_evento) MATCH SIMPLE
+	ON UPDATE NO ACTION ON DELETE NO ACTION,
+	
+	CONSTRAINT fk_tecnica_analisis_forma_analisis FOREIGN KEY (id_tecnica_analisis) 
+	REFERENCES Tecnica_Analisis(id_tecnica_analisis) MATCH SIMPLE
+	ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+SELECT * FROM Forma_Analisis;
+
+DROP TABLE Forma_Analisis;
+
+INSERT INTO Forma_Analisis (id_evento, id_tecnica_analisis) 
+	VALUES (1, 1);
+
+ALTER TABLE Forma_Analisis
+DROP CONSTRAINT fk_evento_forma_analisis;
+
+ALTER TABLE Forma_Analisis
+ADD CONSTRAINT fk_evento_forma_analisis FOREIGN KEY (id_evento) 
+REFERENCES Evento(id_evento) MATCH SIMPLE
+ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE Forma_Analisis
+DROP CONSTRAINT fk_tecnica_analisis_forma_analisis;
+
+ALTER TABLE Forma_Analisis
+ADD CONSTRAINT fk_tecnica_analisis_forma_analisis FOREIGN KEY (id_tecnica_analisis) 
+REFERENCES Tecnica_Analisis(id_tecnica_analisis) MATCH SIMPLE
 ON UPDATE NO ACTION ON DELETE NO ACTION;
 
 CREATE TABLE Tecnica_Muestreo(
