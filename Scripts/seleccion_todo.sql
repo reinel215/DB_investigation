@@ -64,3 +64,5 @@ SELECT * FROM Categoria;
 SELECT * FROM Tipo_Item;
 SELECT * FROM Indicio;
 SELECT * FROM Item;
+SELECT * FROM Contexto_Investigacion;
+SELECT * FROM Entorno_Investigacion;

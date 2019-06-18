@@ -65,3 +65,5 @@ DROP TABLE Tipo_Item CASCADE;
 DROP TABLE Indicio CASCADE;
 DROP TABLE Item  CASCADE;
 DROP TABLE Forma_Analisis CASCADE;
+DROP TABLE Entorno_Investigacion CASCADE;
+DROP TABLE Contexto_Investigacion CASCADE;

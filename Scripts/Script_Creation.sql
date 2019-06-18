@@ -764,6 +764,46 @@ ADD CONSTRAINT fk_estandar_investigacion FOREIGN KEY (id_estandar)
 REFERENCES Estandar(id_estandar) MATCH SIMPLE
 ON UPDATE NO ACTION ON DELETE NO ACTION;
 
+CREATE TABLE Contexto_Investigacion(
+	id_contexto_investigacion SERIAL,
+	nombre VARCHAR(500) NOT NULL,
+	
+	PRIMARY KEY (id_contexto_investigacion)
+);
+
+CREATE TABLE Entorno_Investigacion(
+	id_entorno_investigacion SERIAL,
+	id_investigacion INT NOT NULL,
+	id_contexto_investigacion INT NOT NULL,
+	descripcion VARCHAR(500) NOT NULL,
+	
+	PRIMARY KEY (id_entorno_investigacion),
+	
+	CONSTRAINT fk_investigacion_entorno_investigacion FOREIGN KEY (id_investigacion) 
+	REFERENCES Investigacion(id_investigacion) MATCH SIMPLE
+	ON UPDATE NO ACTION ON DELETE NO ACTION,
+	
+	CONSTRAINT fk_contexto_investigacion_entorno_investigacion FOREIGN KEY (id_contexto_Investigacion) 
+	REFERENCES Contexto_Investigacion(id_contexto_investigacion) MATCH SIMPLE
+	ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+ALTER TABLE Entorno_Investigacion
+DROP CONSTRAINT fk_investigacion_entorno_investigacion;
+
+ALTER TABLE Entorno_Investigacion
+ADD CONSTRAINT fk_investigacion_entorno_investigacion FOREIGN KEY (id_investigacion) 
+REFERENCES Investigacion(id_investigacion) MATCH SIMPLE
+ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE Entorno_Investigacion
+DROP CONSTRAINT fk_contexto_investigacion_entorno_investigacion;
+
+ALTER TABLE Entorno_Investigacion
+ADD CONSTRAINT fk_contexto_investigacion_entorno_investigacion FOREIGN KEY (id_contexto_Investigacion) 
+REFERENCES Contexto_Investigacion(id_contexto_investigacion) MATCH SIMPLE
+ON UPDATE NO ACTION ON DELETE NO ACTION;
+
 CREATE TABLE Nivel_Investigacion(
 	id_nivel_investigacion SERIAL,
 	nombre VARCHAR(100) NOT NULL,

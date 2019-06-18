@@ -80,3 +80,7 @@ INSERT INTO Indicio (contenido)
 	VALUES ('epale todo fino');
 INSERT INTO Item (id_sinergia, id_instrumento, id_indicio, id_categoria, id_tipo_item, identificacion, contenido) 
 	VALUES (1, 1, 1, 1, 1,'epale todo fino', 'si todo fino');
+INSERT INTO Contexto_Investigacion (nombre) 
+	VALUES ('UCAB');
+INSERT INTO Entorno_Investigacion (id_investigacion, id_contexto_investigacion)
+	VALUES (1,1);

@@ -65,3 +65,5 @@ DELETE FROM Categoria;
 DELETE FROM Tipo_Item;
 DELETE FROM Indicio;
 DELETE FROM Item;
+DELETE FROM Entorno_Investigacion;
+DELETE FROM Contexto_Investigacion;
