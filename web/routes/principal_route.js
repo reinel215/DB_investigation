@@ -10,21 +10,12 @@ RouterPrincipal.get("/login", (req, res) =>{
     res.sendFile(path.join(__dirname +'\/..\/views\/index.html'));
 });
 
-RouterPrincipal.get("/validate", (req, res) => {
-    if (req.session.validacion_num > 0){
-      res.send({status : true});
-    }
-    else{
-      res.send({status: false});
-    }
-});
-
 RouterPrincipal.post("/ingreso", (req, res) => {
-    //validacion de ingreso
+    //validacion de ingreso en esta seccion.
     if (req.session.validacion_num)
-      req.session.validacion_num= req.session.validacion_num + 1;
+      req.session.validacion_num= req.session.validacion_num - 1;
     else 
-      req.session.validacion_num= 1;
+      req.session.validacion_num= 2;
     res.redirect("/login");
 });
 

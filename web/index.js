@@ -2,6 +2,8 @@
 const RouterPrincipal= require('./routes/principal_route.js');
 //Ruta principal para direccion de la pagina web.
 const appRoute = require('./routes/app_route.js');
+//Ruta de la api de la aplicacion.
+const api = require('./routes/api.js')
 //Modulo de manejo de servidor backend express
 const express = require("express");
 //Parser del contenido de peticiones.
@@ -43,6 +45,7 @@ app.set("view engine", "jade");
 //Enrutamientos
 app.use("/",RouterPrincipal);
 app.use("/app",appRoute);
+app.use('/api',api);
 
 app.use("/",middleware_session);
 

@@ -60,7 +60,7 @@ class Login extends Component {
         
         var error= null;
         if (!this.state.status){
-            fetch('/validate').then(
+            fetch('/api/validate').then(
                     res => {
                         if (res.status == 200)
                             return res.json()
