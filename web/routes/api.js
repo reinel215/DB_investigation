@@ -14,4 +14,13 @@ RouterPrincipal.get("/validate", (req, res) => {
     }
 });
 
+RouterPrincipal.post("/ingreso", (req, res) => {
+  //validacion de ingreso en esta seccion.
+  if (req.session.validacion_num)
+    req.session.validacion_num= req.session.validacion_num - 1;
+  else 
+    req.session.validacion_num= 2;
+  res.redirect("/login");
+});
+
 module.exports = RouterPrincipal;

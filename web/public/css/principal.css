@@ -29,15 +29,25 @@
     height: 0px;
     opacity: 0;
     transform: scale(0);
-    transition: height 0.4s linear, opacity 0.2s ease-in;
-    overflow: hidden
+    transition: 0.2s linear, opacity 0.4s ease-in;
+    overflow: hidden;
 }
 
 .form-log-active{
     height: 100%;
     opacity: 1;
     transform: scale(1);
-    transition: height 0.2s linear, opacity 0.4s ease-in-out;
+    transition: 0.2s linear, opacity 0.4s ease-in-out;
+}
+
+.form-changing{
+    animation-name:changing;
+    animation-duration: 1s;
+}
+
+.form-changing2{
+    animation-name:changing2;
+    animation-duration: 1s;
 }
 
 .card-pad{
@@ -58,5 +68,23 @@
     100%{
         opacity:1;
         transform:scale(1);
+    }
+}
+
+@keyframes changing{
+    0%{
+        opacity:0;
+    }
+    100%{
+        opacity:1;
+    }
+}
+
+@keyframes changing2{
+    0%{
+        opacity:0;
+    }
+    100%{
+        opacity:1;
     }
 }
