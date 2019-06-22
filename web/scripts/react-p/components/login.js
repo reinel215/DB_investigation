@@ -45,7 +45,8 @@ class Login extends Component {
             },
             render: this.state.render,
             status: this.state.status,
-            mmethod: this.state.method
+            mmethod: this.state.method,
+            response: this.state.response
         });
     }
 
@@ -61,7 +62,8 @@ class Login extends Component {
             },
             render: this.state.render,
             status: this.state.status,
-            method: this.state.method
+            method: this.state.method,
+            response: this.state.response
         });
     }
 
@@ -77,7 +79,8 @@ class Login extends Component {
             },
             render: this.state.render,
             status: this.state.status,
-            method: this.state.method
+            method: this.state.method,
+            response: this.state.response
         });
     }
 
@@ -93,7 +96,8 @@ class Login extends Component {
             },
             render: this.state.render,
             status: this.state.status,
-            method: this.state.method
+            method: this.state.method,
+            response: this.state.response
         });
     }
 
@@ -109,7 +113,8 @@ class Login extends Component {
             },
             render: this.state.render,
             status: this.state.status,
-            method: this.state.method
+            method: this.state.method,
+            response: this.state.response
         });
     }
 
@@ -125,7 +130,8 @@ class Login extends Component {
             },
             render: this.state.render,
             status: this.state.status,
-            method: this.state.method
+            method: this.state.method,
+            response: this.state.response
         });
     }
 
@@ -141,7 +147,8 @@ class Login extends Component {
             },
             render: "form-log-active",
             status: this.state.status,
-            method: this.state.method
+            method: this.state.method,
+            response: this.state.response
         });
     }
 
@@ -157,7 +164,8 @@ class Login extends Component {
             },
             render: "form-log",
             status: this.state.status,
-            method: this.state.method
+            method: this.state.method,
+            response: this.state.response
         });
     }
 
@@ -175,7 +183,8 @@ class Login extends Component {
                 },
                 render: 'form-changing',
                 status: this.state.status,
-                method: false
+                method: false,
+                response: this.state.response
             });
         if (event.target.name == 'signup' && !(this.state.method))
             this.setState({
@@ -189,7 +198,8 @@ class Login extends Component {
                 },
                 render: 'form-changing2',
                 status: this.state.status,
-                method: true
+                method: true,
+                response: this.state.response
             });
     }
 
@@ -210,8 +220,16 @@ class Login extends Component {
                                 this.setState({
                                     email: '',
                                     password: '',
-                                    render: "form-log",
-                                    status: true
+                                    registro: {
+                                        nombres: this.state.nombres,
+                                        apellidos: this.state.registro.apellidos,
+                                        password: this.state.registro.password,
+                                        email: this.state.registro.email
+                                    },
+                                    render: 'form-log',
+                                    status: true,
+                                    method: this.state.method,
+                                    response: json.response
                                 });
                             }
                         }
@@ -219,12 +237,12 @@ class Login extends Component {
         }
         else
             error= (<div className="row d-flex justify-content-center">
-                        <span class="badge badge-danger mt-3"> Intento de conexion fallido, intente denuevo.</span>
+                        <span class="badge badge-danger mt-3"> {this.state.response}</span>
                     </div>);
         if (!this.state.method)
             login= (
                     <div>
-                        <form className={this.state.render} action="/api/ingreso" method="POST">
+                        <form className={this.state.render} action="/ingreso" method="POST">
                             <div className="form-group">
                                 <label className="roboto font-weight-bold" for="email font-weight-bold">Email</label>
                                 <input type="text" name="email" placeholder="Email" id="email" className="form-control" onChange={this.handleChangeEmail} value={this.state.email} required autofocus></input>
@@ -246,7 +264,7 @@ class Login extends Component {
         else
             login= (
                 <div>
-                    <form className={this.state.render} action="/api/registro" method="POST">
+                    <form className={this.state.render} action="/registro" method="POST">
                         <div className="form-group">
                             <label className="roboto font-weight-bold" for="email font-weight-bold">Nombres</label>
                             <input type="text" name="nombres" placeholder="Nombres" id="nombre" className="form-control" onChange={this.handleChangeRegistroNombre} value={this.state.registro.nombres} required autofocus></input>

@@ -7,20 +7,13 @@ var repositorios= [];
 
 RouterPrincipal.get("/validate", (req, res) => {
     if (req.session.validacion_num  < 3){
-      res.send({status : true});
+      res.send({status : true,
+                response: ''});
     }
     else{
-      res.send({status: false});
+      res.send({status: false,
+                response: 'Usuario no existe o password invalida.'});
     }
-});
-
-RouterPrincipal.post("/ingreso", (req, res) => {
-  //validacion de ingreso en esta seccion.
-  if (req.session.validacion_num)
-    req.session.validacion_num= req.session.validacion_num - 1;
-  else 
-    req.session.validacion_num= 2;
-  res.redirect("/login");
 });
 
 module.exports = RouterPrincipal;

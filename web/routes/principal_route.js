@@ -10,6 +10,15 @@ RouterPrincipal.get("/login", (req, res) =>{
     res.sendFile(path.join(__dirname +'\/..\/views\/index.html'));
 });
 
+RouterPrincipal.post("/ingreso", (req, res) => {
+  //validacion de ingreso en esta seccion.
+  if (req.session.validacion_num)
+    req.session.validacion_num= req.session.validacion_num - 1;
+  else 
+    req.session.validacion_num= 2;
+  res.redirect("/login");
+});
+
 /*
 app.post("/signup", function(req,res){
   //Metodo post para el registro de los usuarios a traves del metodo post. con el req obtenemos los datos respectivos de cada a usuario para su registro.
