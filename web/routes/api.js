@@ -4,10 +4,9 @@ const express = require('express');
 const RouterPrincipal = express.Router();
 
 RouterPrincipal.get("/validate", (req, res) => {
-  console.log('session en validate: ');
-  console.log(req.session);
   res.send({status: req.session.status,
-    response: req.session.response
+    response: req.session.response,
+    register_f: req.session.register_f
   });
 });
 

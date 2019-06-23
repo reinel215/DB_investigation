@@ -312,7 +312,7 @@ class Login extends Component {
                             return null;
                     }).then(
                         json => {
-                            if (json.status){
+                            if (json.status || json.register_f){
                                 errorLog= json.response;
                                 this.setState({
                                     email: this.state.email,
@@ -324,9 +324,9 @@ class Login extends Component {
                                         email: this.state.registro.email
                                     },
                                     render: 'form-log',
-                                    status: true,
+                                    status: json.status,
                                     method: this.state.method,
-                                    register_f: this.state.register_f
+                                    register_f: json.register_f
                                 });
                             }
                         }
@@ -335,14 +335,20 @@ class Login extends Component {
         if (!this.state.method){
             var error;
             var button;
+            var logReg;
             if(this.state.status){
                 error= (<div className="row container d-flex justify-content-center error-bg">
                             <span class="col-12 badge badge-danger mt-3"> {errorLog} </span>
                         </div>);
             }
+            if(errorLog == 'Registro completado.'){
+                logReg = (<div className="row container d-flex justify-content-center error-bg">
+                            <span class="col-12 badge badge-success mt-3"> {errorLog} </span>
+                          </div>);
+            }
             login= (
                     <div>
-                        <form className={this.state.render} action="/ingreso" method="POST">
+                        <form className={this.state.render} action="/signin" method="POST">
                             <div className="form-group">
                                 <label className="roboto font-weight-bold" for="email font-weight-bold">Email</label>
                                 <input type="text" name="email" placeholder="Email" id="email" className="form-control" onChange={this.handleChangeEmail} value={this.state.email} required></input>
@@ -358,6 +364,7 @@ class Login extends Component {
                         <div className="row d-flex justify-content-center">
                             <button name="signup" type="" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6" onClick={this.handleMethod}>Sign-Up</button>
                             {error}
+                            {logReg}
                         </div>
                     </div>
             );
@@ -376,7 +383,7 @@ class Login extends Component {
             }
             login= (
                 <div>
-                    <form className={this.state.render} action="/registro" method="POST">
+                    <form className={this.state.render} action="/signup" method="POST">
                         <div className="form-group">
                             <label className="roboto font-weight-bold" for="email font-weight-bold">Nombres</label>
                             <input type="text" name="nombres" placeholder="Nombres" id="nombre" className="form-control" onChange={this.handleChangeRegistroNombre} value={this.state.registro.nombres} required></input>
