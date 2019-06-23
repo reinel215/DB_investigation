@@ -26,37 +26,45 @@ RouterPrincipal.get("/login", (req, res) =>{
     res.sendFile(path.join(__dirname +'\/..\/views\/index.html'));
 });
 
+RouterPrincipal.get("/session", (req, res) =>{
+  res.send(req.session);
+});
+
 //Validacion de ingreso.
 RouterPrincipal.post("/ingreso", (req, res) => {
   const values = [md5(req.body.password), req.body.email];
   //validacion de ingreso en esta seccion.
   client.connect().catch((err) => {
-    console.log(err);
+    req.session.status = true;
     req.session.response = 'Error al intentar conectar.'
+    req.session.save();
     res.redirect("/login");
   });
   //Validacion de ingreso.
   client.query(query_user,values, (err,result) => {
     if (err){
-      console.log('Error de query. ' + err);
-      req.session.status= true;
+      req.session.status = true;
       req.session.response= 'Error de conexion, usuario no encontrado.'
+      req.session.save();
     }
     else{
       if(result.rows[0] && result.rows[0].intentos > 0){
-        req.session.status=false;
         req.session.id_usuario = result.rows[0].id_usuario;
         req.session.hash_password = result.rows[0].hash_password;
         req.session.email = result.rows[0].correo;
+        req.session.save();
         client.end();
         //res.redirect('/app');
       }
       else{
-        req.session.status= true;
+        req.session.status = true;
         req.session.response= 'Usuario invalido.';
+        req.session.save();
       }
     }
   });
+  client.end();
+  console.log(req.session);
   res.redirect("/login");
 });
 

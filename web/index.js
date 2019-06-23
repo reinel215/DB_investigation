@@ -37,8 +37,13 @@ app.use(session({
   //la sesion se vuelve a guardar si ha sido modificada la sesion, si dos usuarios entran en paralelo, ambos pueden modificar la sesion, por lo tanto lo mejor es colocarlo en false.
   resave: false,
   //La sesion debe guardarse aun cuando no ha sido no inicializada, una sesion no inicializada significa que es nueva pero no modificada. Reduce el store colocarla en false.
-  saveUninitialized: false
+  saveUninitialized: true,
+  cookie: {}
 }));
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
 app.set("view engine", "jade");
 
 //Enrutamientos

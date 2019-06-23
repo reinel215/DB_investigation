@@ -104,8 +104,7 @@ class Login extends Component {
             render: this.state.render,
             status: this.state.status,
             method: this.state.method,
-            register_f: this.state.register_f,
-            email_error: this.state.email_error
+            register_f: this.state.register_f
         });
     }
 
@@ -122,8 +121,7 @@ class Login extends Component {
             render: this.state.render,
             status: this.state.status,
             method: this.state.method,
-            register_f: this.state.register_f,
-            email_error: this.state.email_error
+            register_f: this.state.register_f
         });
     }
 
@@ -140,8 +138,7 @@ class Login extends Component {
             render: this.state.render,
             status: this.state.status,
             method: this.state.method,
-            register_f: this.state.register_f,
-            email_error: this.state.email_error
+            register_f: this.state.register_f
         });
     }
 
@@ -282,7 +279,7 @@ class Login extends Component {
                 method: true,
                 register_f: false
             });
-        if ( this.state.status || this.state.register_f){
+        if ( event.target.name == 'signup' && this.state.register_f){
             errorLog = 'Campos invalidos.';
             this.setState({
                 email: this.state.email,
@@ -329,8 +326,7 @@ class Login extends Component {
                                     render: 'form-log',
                                     status: true,
                                     method: this.state.method,
-                                    register_f: this.state.register_f,
-                                    email_error: this.state.email_error
+                                    register_f: this.state.register_f
                                 });
                             }
                         }
@@ -343,10 +339,6 @@ class Login extends Component {
                 error= (<div className="row container d-flex justify-content-center error-bg">
                             <span class="col-12 badge badge-danger mt-3"> {errorLog} </span>
                         </div>);
-                button= <button name="login" type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6" onClick={this.handleMethod} disabled>Sign-In</button>
-            }
-            else{
-                button= <button name="login" type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6" onClick={this.handleMethod}>Sign-In</button>
             }
             login= (
                     <div>
@@ -360,7 +352,7 @@ class Login extends Component {
                                 <input type="text" name="password" placeholder="Password" id="password" className="form-control" onChange={this.handleChangePassword} value={this.state.password} required></input>
                             </div>
                             <div className="row d-flex justify-content-center">
-                                {button}
+                                <button name="login" type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6" onClick={this.handleMethod}>Sign-In</button>
                             </div>
                         </form>
                         <div className="row d-flex justify-content-center">
