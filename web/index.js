@@ -16,7 +16,6 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const config = require('./webpack.config.js');
 //Compilacion del webpack config para su uso en el middleware dentro del servidor.
 const compiler = webpack(config);
-const middleware_session = require('./middlewares/session.js');
 var session = require("express-session");
 //Session es el metodo para asignar la cookie de inicio de sesion. un Id especifico para su entrada.
 
@@ -46,8 +45,6 @@ app.set("view engine", "jade");
 app.use("/",RouterPrincipal);
 app.use("/app",appRoute);
 app.use('/api',api);
-
-app.use("/",middleware_session);
 
 //Meta data para los contenidos de la pagina
 

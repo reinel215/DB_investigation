@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import fetch from 'node-fetch';
 
-var loginStatus;
+var errorLog;
 
 class Login extends Component {
 
@@ -18,8 +18,11 @@ class Login extends Component {
                 email: "",
                 tipo_usuario: 1,
             },
+            render: "",
             status: false,
-            method: false
+            method: false,
+            response: "",
+            register_f: false
         };
 
         this.handleChangeEmail = this.handleChangeEmail.bind(this);
@@ -30,24 +33,44 @@ class Login extends Component {
         this.handleChangeRegistroNombre = this.handleChangeRegistroNombre.bind(this);
         this.handleChangeRegistroPassword = this.handleChangeRegistroPassword.bind(this);
         this.handleChangeRegistroEmail = this.handleChangeRegistroEmail.bind(this);
+        this.handleChangeConfirmPassword = this.handleChangeConfirmPassword.bind(this);
         this.handleMethod = this.handleMethod.bind(this);
     }
 
     handleChangeEmail(event){
-        this.setState({
-            email: event.target.value,
-            password: this.state.password,
-            registro: {
-                nombres: this.state.nombres,
-                apellidos: this.state.registro.apellidos,
-                password: this.state.registro.password,
-                email: this.state.registro.email
-            },
-            render: this.state.render,
-            status: this.state.status,
-            mmethod: this.state.method,
-            response: this.state.response
-        });
+        if ( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(this.state.email) || event.target.value == ''){
+            this.setState({
+                email: event.target.value,
+                password: this.state.password,
+                registro: {
+                    nombres: this.state.registro.nombres,
+                    apellidos: this.state.registro.apellidos,
+                    password: this.state.registro.password,
+                    email: this.state.registro.email
+                },
+                render: this.state.render,
+                status: false,
+                method: this.state.method,
+                register_f: this.state.register_f
+            });
+        }
+        else{
+            errorLog="Email invalido para ingreso"
+            this.setState({
+                email: event.target.value,
+                password: this.state.password,
+                registro: {
+                    nombres: this.state.registro.nombres,
+                    apellidos: this.state.registro.apellidos,
+                    password: this.state.registro.password,
+                    email: this.state.registro.email
+                },
+                render: this.state.render,
+                status: true,
+                method: this.state.method,
+                register_f: this.state.register_f
+            });
+        }
     }
 
     handleChangePassword(event){
@@ -63,7 +86,8 @@ class Login extends Component {
             render: this.state.render,
             status: this.state.status,
             method: this.state.method,
-            response: this.state.response
+            register_f: this.state.register_f,
+            email_error: this.state.email_error
         });
     }
 
@@ -80,7 +104,8 @@ class Login extends Component {
             render: this.state.render,
             status: this.state.status,
             method: this.state.method,
-            response: this.state.response
+            register_f: this.state.register_f,
+            email_error: this.state.email_error
         });
     }
 
@@ -97,7 +122,8 @@ class Login extends Component {
             render: this.state.render,
             status: this.state.status,
             method: this.state.method,
-            response: this.state.response
+            register_f: this.state.register_f,
+            email_error: this.state.email_error
         });
     }
 
@@ -114,25 +140,45 @@ class Login extends Component {
             render: this.state.render,
             status: this.state.status,
             method: this.state.method,
-            response: this.state.response
+            register_f: this.state.register_f,
+            email_error: this.state.email_error
         });
     }
 
     handleChangeRegistroEmail(event){
-        this.setState({
-            email: this.state.email,
-            password: this.state.password,
-            registro: {
-                nombres: this.state.registro.nombres,
-                apellidos: this.state.registro.apellidos,
-                password: this.state.registro.password,
-                email: event.target.value
-            },
-            render: this.state.render,
-            status: this.state.status,
-            method: this.state.method,
-            response: this.state.response
-        });
+        if ( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(this.state.registro.email) || event.target.value == ''){
+            this.setState({
+                email: this.state.email,
+                password: this.state.password,
+                registro: {
+                    nombres: this.state.registro.nombres,
+                    apellidos: this.state.registro.apellidos,
+                    password: this.state.registro.password,
+                    email: event.target.value
+                },
+                render: this.state.render,
+                status: this.state.status,
+                method: this.state.method,
+                register_f: false
+            });
+        }
+        else{
+            errorLog="Email invalido para registro."
+            this.setState({
+                email: this.state.email,
+                password: this.state.password,
+                registro: {
+                    nombres: this.state.registro.nombres,
+                    apellidos: this.state.registro.apellidos,
+                    password: this.state.registro.password,
+                    email: event.target.value
+                },
+                render: this.state.render,
+                status: this.state.status,
+                method: this.state.method,
+                register_f: true
+            });
+        }
     }
 
     handleHoover(event){
@@ -148,7 +194,7 @@ class Login extends Component {
             render: "form-log-active",
             status: this.state.status,
             method: this.state.method,
-            response: this.state.response
+            register_f: this.state.register_f
         });
     }
 
@@ -165,13 +211,79 @@ class Login extends Component {
             render: "form-log",
             status: this.state.status,
             method: this.state.method,
-            response: this.state.response
+            register_f: this.state.register_f
         });
     }
 
+    handleChangeConfirmPassword(event){
+        if (event.target.value != this.state.registro.password){
+            errorLog="Contraseña invalida, diferentes."
+            this.setState({
+                email: this.state.email,
+            password: this.state.password,
+            registro: {
+                nombres: this.state.nombres,
+                apellidos: this.state.registro.apellidos,
+                password: this.state.registro.password,
+                email: this.state.registro.email
+            },
+            render: this.state.render,
+            status: this.state.status,
+            method: this.state.method,
+            register_f: true
+            });
+        }
+        else {
+            this.setState({
+                email: this.state.email,
+            password: this.state.password,
+            registro: {
+                nombres: this.state.nombres,
+                apellidos: this.state.registro.apellidos,
+                password: this.state.registro.password,
+                email: this.state.registro.email
+            },
+            render: this.state.render,
+            status: this.state.status,
+            method: this.state.method,
+            register_f: false
+            });
+        }
+    }
+
     handleMethod(event){
-        console.log(this.state.method);
         if (event.target.name == 'login' && this.state.method)
+            this.setState({
+                email: '',
+                password: '',
+                registro: {
+                    nombres: '',
+                    apellidos: '',
+                    password: '',
+                    email: ''
+                },
+                render: 'form-changing',
+                status: false,
+                method: false,
+                register_f: false
+            });
+        if (event.target.name == 'signup' && !(this.state.method))
+            this.setState({
+                email: '',
+                password: '',
+                registro: {
+                    nombres: '',
+                    apellidos: '',
+                    password: '',
+                    email: ''
+                },
+                render: 'form-changing2',
+                status: false,
+                method: true,
+                register_f: false
+            });
+        if ( this.state.status || this.state.register_f){
+            errorLog = 'Campos invalidos.';
             this.setState({
                 email: this.state.email,
                 password: this.state.password,
@@ -179,28 +291,15 @@ class Login extends Component {
                     nombres: this.state.nombres,
                     apellidos: this.state.registro.apellidos,
                     password: this.state.registro.password,
-                    email: this.state.registro.email
+                    email: this.state.registro.email,
+
                 },
-                render: 'form-changing',
+                render: this.state.render,
                 status: this.state.status,
-                method: false,
-                response: this.state.response
+                method: this.state.method,
+                register_f: this.state.register_f
             });
-        if (event.target.name == 'signup' && !(this.state.method))
-            this.setState({
-                email: this.state.email,
-                password: event.target.value,
-                registro: {
-                    nombres: this.state.nombres,
-                    apellidos: this.state.registro.apellidos,
-                    password: this.state.registro.password,
-                    email: this.state.registro.email
-                },
-                render: 'form-changing2',
-                status: this.state.status,
-                method: true,
-                response: this.state.response
-            });
+        }
     }
 
     render(){
@@ -217,9 +316,10 @@ class Login extends Component {
                     }).then(
                         json => {
                             if (json.status){
+                                errorLog= json.response;
                                 this.setState({
-                                    email: '',
-                                    password: '',
+                                    email: this.state.email,
+                                    password: this.state.password,
                                     registro: {
                                         nombres: this.state.nombres,
                                         apellidos: this.state.registro.apellidos,
@@ -229,30 +329,38 @@ class Login extends Component {
                                     render: 'form-log',
                                     status: true,
                                     method: this.state.method,
-                                    response: json.response
+                                    register_f: this.state.register_f,
+                                    email_error: this.state.email_error
                                 });
                             }
                         }
                     );
         }
-        else
-            error= (<div className="row d-flex justify-content-center">
-                        <span class="badge badge-danger mt-3"> {this.state.response}</span>
-                    </div>);
-        if (!this.state.method)
+        if (!this.state.method){
+            var error;
+            var button;
+            if(this.state.status){
+                error= (<div className="row container d-flex justify-content-center error-bg">
+                            <span class="col-12 badge badge-danger mt-3"> {errorLog} </span>
+                        </div>);
+                button= <button name="login" type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6" onClick={this.handleMethod} disabled>Sign-In</button>
+            }
+            else{
+                button= <button name="login" type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6" onClick={this.handleMethod}>Sign-In</button>
+            }
             login= (
                     <div>
                         <form className={this.state.render} action="/ingreso" method="POST">
                             <div className="form-group">
                                 <label className="roboto font-weight-bold" for="email font-weight-bold">Email</label>
-                                <input type="text" name="email" placeholder="Email" id="email" className="form-control" onChange={this.handleChangeEmail} value={this.state.email} required autofocus></input>
+                                <input type="text" name="email" placeholder="Email" id="email" className="form-control" onChange={this.handleChangeEmail} value={this.state.email} required></input>
                             </div>
                             <div className="form-group">
                                 <label className="roboto font-weight-bold" for="password">Password</label>
                                 <input type="text" name="password" placeholder="Password" id="password" className="form-control" onChange={this.handleChangePassword} value={this.state.password} required></input>
                             </div>
                             <div className="row d-flex justify-content-center">
-                                <button name="login" type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6" onClick={this.handleMethod}>Sign-In</button>
+                                {button}
                             </div>
                         </form>
                         <div className="row d-flex justify-content-center">
@@ -261,21 +369,33 @@ class Login extends Component {
                         </div>
                     </div>
             );
-        else
+        }
+        else{
+            var errorsign="";
+            var button;
+            if (this.state.register_f){
+                errorsign= (<div className="row container d-flex justify-content-center error-bg">
+                                <span class="badge col-12 badge-danger mt-3">{errorLog}</span>
+                            </div>);
+                button=(<button name="signup" type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6" onClick={this.handleMethod} disabled>Sign-Up</button>);
+            }
+            else{
+                button=(<button name="signup" type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6" onClick={this.handleMethod}>Sign-Up</button>);
+            }
             login= (
                 <div>
                     <form className={this.state.render} action="/registro" method="POST">
                         <div className="form-group">
                             <label className="roboto font-weight-bold" for="email font-weight-bold">Nombres</label>
-                            <input type="text" name="nombres" placeholder="Nombres" id="nombre" className="form-control" onChange={this.handleChangeRegistroNombre} value={this.state.registro.nombres} required autofocus></input>
+                            <input type="text" name="nombres" placeholder="Nombres" id="nombre" className="form-control" onChange={this.handleChangeRegistroNombre} value={this.state.registro.nombres} required></input>
                         </div>
                         <div className="form-group">
                             <label className="roboto font-weight-bold" for="email font-weight-bold">Apellidos</label>
-                            <input type="text" name="apellidos" placeholder="Apellidos" id="apellidos" className="form-control" onChange={this.handleChangeRegistroApellido} value={this.state.registro.apellidos} required autofocus></input>
+                            <input type="text" name="apellidos" placeholder="Apellidos" id="apellidos" className="form-control" onChange={this.handleChangeRegistroApellido} value={this.state.registro.apellidos} required></input>
                         </div>
                         <div className="form-group">
                             <label className="roboto font-weight-bold" for="email font-weight-bold">Email</label>
-                            <input type="text" name="email" placeholder="Email" id="email" className="form-control" onChange={this.handleChangeRegistroEmail} value={this.state.registro.email} required autofocus></input>
+                            <input type="text" name="email" placeholder="Email" id="email" className="form-control" onChange={this.handleChangeRegistroEmail} value={this.state.registro.email} required></input>
                         </div>
                         <div className="form-group">
                             <label className="roboto font-weight-bold" for="password">Password</label>
@@ -286,14 +406,16 @@ class Login extends Component {
                             <input type="text" name="password" placeholder="Password" id="password" className="form-control" onChange={this.handleChangeConfirmPassword} required></input>
                         </div>
                         <div className="row d-flex justify-content-center">
-                            <button name="signup" type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6" onClick={this.handleMethod}>Sign-Up</button>
+                            {button}
                         </div>
                     </form>
                     <div className="row d-flex justify-content-center">
                         <button name="login" type="" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6" onClick={this.handleMethod}>Sign-In</button>
                     </div>
+                    {errorsign}
                 </div>
             );
+        }
 
         return(
             <div className="col-6 card card-body card-pad" onMouseEnter={this.handleHoover} onMouseLeave={this.handleHooverOut}>

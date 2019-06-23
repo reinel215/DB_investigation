@@ -3,19 +3,60 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const RouterPrincipal = express.Router();
-var repositorios= [];
+const { Client } = require('pg');
+const md5 = require('md5');
+const middleware_session = require('../middlewares/session.js');
+const middleware_logged = require('../middlewares/loged.js');
+
+const client = new Client({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'postgres',
+  password: 'UCABINV',
+  port: 5432,
+});
+
+const query_user= 'SELECT A.id_usuario, A.correo, A.hash_password, A.intentos FROM Usuario as A WHERE A.hash_password = $1::text AND A.correo = $2::text';
+
+RouterPrincipal.use('/app', middleware_session);
+RouterPrincipal.use('/login', middleware_logged);
 
 //Respuesta del primer acceso.
 RouterPrincipal.get("/login", (req, res) =>{
     res.sendFile(path.join(__dirname +'\/..\/views\/index.html'));
 });
 
+//Validacion de ingreso.
 RouterPrincipal.post("/ingreso", (req, res) => {
+  const values = [md5(req.body.password), req.body.email];
   //validacion de ingreso en esta seccion.
-  if (req.session.validacion_num)
-    req.session.validacion_num= req.session.validacion_num - 1;
-  else 
-    req.session.validacion_num= 2;
+  client.connect().catch((err) => {
+    console.log(err);
+    req.session.response = 'Error al intentar conectar.'
+    res.redirect("/login");
+  });
+  //Validacion de ingreso.
+  client.query(query_user,values, (err,result) => {
+    if (err){
+      console.log('Error de query. ' + err);
+      req.session.status= true;
+      req.session.response= 'Error de conexion, usuario no encontrado.'
+    }
+    else{
+      if(result.rows[0] && result.rows[0].intentos > 0){
+        req.session.status=false;
+        req.session.id_usuario = result.rows[0].id_usuario;
+        req.session.hash_password = result.rows[0].hash_password;
+        req.session.email = result.rows[0].correo;
+        client.end();
+        //res.redirect('/app');
+      }
+      else{
+        req.session.status= true;
+        req.session.response= 'Usuario invalido.';
+      }
+    }
+  });
   res.redirect("/login");
 });
 
