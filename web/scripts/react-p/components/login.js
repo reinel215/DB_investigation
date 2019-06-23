@@ -213,7 +213,7 @@ class Login extends Component {
     }
 
     handleChangeConfirmPassword(event){
-        if (event.target.value != this.state.registro.password){
+        if (event.target.value != this.state.registro.password && event.target.value != ''){
             errorLog="Contraseña invalida, diferentes."
             this.setState({
                 email: this.state.email,
