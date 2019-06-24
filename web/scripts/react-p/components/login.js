@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import fetch from 'node-fetch';
 
 var errorLog;
-var confirmPasw = "epa";
 
 class Login extends Component {
 
@@ -40,13 +39,13 @@ class Login extends Component {
 
     handleChangeEmail(event){
         if ( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(this.state.email) || event.target.value == ''){
-            console.log(this.state)
             this.setState({
-                email: event.target.value
+                email: event.target.value,
+                status:false
             });
         }
         else{
-            errorLog="Email invalido para ingreso"
+            errorLog="Email invalido para ingreso";
             this.setState({
                 email: event.target.value,
                 status: true
@@ -207,7 +206,6 @@ class Login extends Component {
     }
 
     render(){
-        console.log(this.state);
         var error;
         var login;
         if (!this.state.status){

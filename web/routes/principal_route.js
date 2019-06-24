@@ -4,6 +4,7 @@ const path = require('path');
 const RouterPrincipal = express.Router();
 const { Client } = require('pg');
 const md5 = require('md5');
+const middleware_loged = require('../middlewares/loged.js');
 const datos= {
   user: 'postgres',
   host: 'localhost',
@@ -18,8 +19,13 @@ const reducir_intento= 'UPDATE Usuario SET intentos = $1 WHERE Usuario.id = $2';
 const reset_intento= 'UPDATE Usuario SET intentos = 3 WHERE Usuario.id = $1';
 const query_register= 'INSERT INTO Usuario (nombres, apellidos, correo, hash_password, intentos, id_tipo_usuario) VALUES ($1, $2, $3, $4, 3, 1)';
 
-//Respuesta del primer acceso.
 RouterPrincipal.get("/", (req, res) =>{
+  res.redirect('/login');
+});
+
+RouterPrincipal.use("/login",middleware_loged);
+//Respuesta del primer acceso.
+RouterPrincipal.get("/login", (req, res) =>{
     res.sendFile(path.join(__dirname +'\/..\/views\/index.html'));
 });
 
@@ -42,13 +48,16 @@ RouterPrincipal.post("/signin", (req, res) => {
       req.session.save();
     }
     else{
+      //Comprobacion de existencia de usuario y de intentos valido.
       if(result.rows[0] && result.rows[0].intentos > 0){
+        //comprobacion de uso de password correcto. Caso incorrecto
         if (result.rows[0].hash_password != md5(req.body.password)){
           req.session.status = true;
           req.session.response = 'Clave invalida';
           values =[result.rows[0].intentos--, result.rows[0].id_usuario];
           client.query(reducir_intento, values).then( result => console.log(result)).catch(e => console.log(e));
         }
+        //Caso Correcto.
         else{
           values =[result.rows[0].id_usuario];
           client.query(reset_intento, values).then( result => console.log(result)).catch(e => console.log(e));;
@@ -57,16 +66,18 @@ RouterPrincipal.post("/signin", (req, res) => {
           req.session.email = result.rows[0].correo;
           req.session.nombres = result.rows[0].nombres;
           req.session.apellidos = result.rows[0].apellidos;
-          req.session.save()
         }
       }
+      //Usuario inexistente, invalido.
       else{
         req.session.status = true;
         req.session.response= 'Usuario invalido.';
       }
     }
+    //Finalizacion de la respuesta con desconexion y redireccion.
     req.session.save();
     client.end((err) => console.log('disconnected'));
+    console.log('redireccion');
     res.redirect('/');
   });
 });

@@ -5,6 +5,7 @@ module.exports = {
   mode: 'development',
   entry : {
     principal: path.resolve(__dirname, 'scripts') +'/react-p/indexPrincipal.js',
+    aplicacion: path.resolve(__dirname, 'scripts') + '/react-p/indexAplicacion.js'
   },
   output: {
     path: path.resolve(__dirname, 'public'),
