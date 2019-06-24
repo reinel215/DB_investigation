@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import fetch from 'node-fetch';
 
 var errorLog;
+var confirmPasw;
 
 class Login extends Component {
 
@@ -35,144 +36,127 @@ class Login extends Component {
         this.handleChangeRegistroEmail = this.handleChangeRegistroEmail.bind(this);
         this.handleChangeConfirmPassword = this.handleChangeConfirmPassword.bind(this);
         this.handleMethod = this.handleMethod.bind(this);
+        this.actualizacionEmail = this.actualizacionEmail.bind(this);
+        this.actualizacionPassword = this.actualizacionPassword.bind(this);
+    }
+
+    actualizacionEmail(){
+        if (confirmPasw != this.state.registro.password || this.state.registro.password < 6){
+            errorLog="Contraseña invalida."
+            this.setState({
+                register_f: true
+            });
+        }
+    }
+
+    actualizacionPassword(){
+        if (!( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(this.state.registro.email) || this.state.registro.email == '')){
+            errorLog="Email invalido para registro";
+            this.setState({
+                register_f: true
+            });
+        }
     }
 
     handleChangeEmail(event){
         if ( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(this.state.email) || event.target.value == ''){
+            console.log(this.state)
             this.setState({
-                email: event.target.value,
-                password: this.state.password,
-                registro: {
-                    nombres: this.state.registro.nombres,
-                    apellidos: this.state.registro.apellidos,
-                    password: this.state.registro.password,
-                    email: this.state.registro.email
-                },
-                render: this.state.render,
-                status: false,
-                method: this.state.method,
-                register_f: this.state.register_f
+                email: event.target.value
             });
         }
         else{
             errorLog="Email invalido para ingreso"
             this.setState({
                 email: event.target.value,
-                password: this.state.password,
-                registro: {
-                    nombres: this.state.registro.nombres,
-                    apellidos: this.state.registro.apellidos,
-                    password: this.state.registro.password,
-                    email: this.state.registro.email
-                },
-                render: this.state.render,
-                status: true,
-                method: this.state.method,
-                register_f: this.state.register_f
+                status: true
             });
         }
     }
 
     handleChangePassword(event){
         this.setState({
-            email: this.state.email,
-            password: event.target.value,
-            registro: {
-                nombres: this.state.nombres,
-                apellidos: this.state.registro.apellidos,
-                password: this.state.registro.password,
-                email: this.state.registro.email
-            },
-            render: this.state.render,
-            status: this.state.status,
-            method: this.state.method,
-            register_f: this.state.register_f,
-            email_error: this.state.email_error
+            password: event.target.value
         });
     }
 
     handleChangeRegistroNombre(event){
         this.setState({
-            email: this.state.email,
-            password: this.state.password,
             registro: {
                 nombres: event.target.value,
                 apellidos: this.state.registro.apellidos,
                 password: this.state.registro.password,
-                email: this.state.registro.email
-            },
-            render: this.state.render,
-            status: this.state.status,
-            method: this.state.method,
-            register_f: this.state.register_f
+                email: this.state.registro.email,
+                tipo_usuario: this.state.registro.tipo_usuario,
+            }
         });
     }
 
     handleChangeRegistroApellido(event){
         this.setState({
-            email: this.state.email,
-            password: this.state.password,
             registro: {
                 nombres: this.state.registro.nombres,
                 apellidos: event.target.value,
                 password: this.state.registro.password,
-                email: this.state.registro.email
-            },
-            render: this.state.render,
-            status: this.state.status,
-            method: this.state.method,
-            register_f: this.state.register_f
+                email: this.state.registro.email,
+                tipo_usuario: this.state.registro.tipo_usuario,
+            }
         });
     }
 
     handleChangeRegistroPassword(event){
-        this.setState({
-            email: this.state.email,
-            password: this.state.password,
-            registro: {
-                nombres: this.state.registro.nombres,
-                apellidos: this.state.registro.apellidos,
-                password: event.target.value,
-                email: this.state.registro.email
-            },
-            render: this.state.render,
-            status: this.state.status,
-            method: this.state.method,
-            register_f: this.state.register_f
-        });
+        if (event.target.value.length < 6){
+            errorLog="Password invalida"
+            this.setState({
+                registro: {
+                    nombres: this.state.registro.nombres,
+                    apellidos: this.state.registro.apellidos,
+                    password: event.target.value,
+                    email: this.state.registro.email,
+                    tipo_usuario: this.state.registro.tipo_usuario,
+                },
+                register_f: true
+            });
+        }
+        else{
+            this.actualizacionPassword();
+            this.setState({
+                registro: {
+                    nombres: this.state.registro.nombres,
+                    apellidos: this.state.registro.apellidos,
+                    password: event.target.value,
+                    email: this.state.registro.email,
+                    tipo_usuario: this.state.registro.tipo_usuario,
+                },
+                register_f: false
+            });
+        }
     }
 
     handleChangeRegistroEmail(event){
-        if ( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(this.state.registro.email) || event.target.value == ''){
+        if ( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(event.target.value) || event.target.value == ''){
+            this.actualizacionEmail();
             this.setState({
-                email: this.state.email,
-                password: this.state.password,
                 registro: {
                     nombres: this.state.registro.nombres,
                     apellidos: this.state.registro.apellidos,
                     password: this.state.registro.password,
-                    email: event.target.value
+                    email: event.target.value,
+                    tipo_usuario: this.state.registro.tipo_usuario,
                 },
-                render: this.state.render,
-                status: this.state.status,
-                method: this.state.method,
                 register_f: false
             });
         }
         else{
             errorLog="Email invalido para registro."
             this.setState({
-                email: this.state.email,
-                password: this.state.password,
                 registro: {
                     nombres: this.state.registro.nombres,
                     apellidos: this.state.registro.apellidos,
                     password: this.state.registro.password,
-                    email: event.target.value
+                    email: event.target.value,
+                    tipo_usuario: this.state.registro.tipo_usuario,
                 },
-                render: this.state.render,
-                status: this.state.status,
-                method: this.state.method,
                 register_f: true
             });
         }
@@ -180,70 +164,28 @@ class Login extends Component {
 
     handleHoover(event){
         this.setState({
-            email: this.state.email,
-            password: event.target.value,
-            registro: {
-                nombres: this.state.nombres,
-                apellidos: this.state.registro.apellidos,
-                password: this.state.registro.password,
-                email: this.state.registro.email
-            },
-            render: "form-log-active",
-            status: this.state.status,
-            method: this.state.method,
-            register_f: this.state.register_f
+            render: "form-log-active"
         });
     }
 
     handleHooverOut(event){
         this.setState({
-            email: this.state.email,
-            password: this.state.password,
-            registro: {
-                nombres: this.state.nombres,
-                apellidos: this.state.registro.apellidos,
-                password: this.state.registro.password,
-                email: this.state.registro.email
-            },
-            render: "form-log",
-            status: this.state.status,
-            method: this.state.method,
-            register_f: this.state.register_f
+            render: "form-log"
         });
     }
 
     handleChangeConfirmPassword(event){
+        confirmPasw= event.target.value;
         if (event.target.value != this.state.registro.password && event.target.value != ''){
-            errorLog="Contraseña invalida, diferentes."
+            errorLog="Contraseña invalida."
             this.setState({
-                email: this.state.email,
-            password: this.state.password,
-            registro: {
-                nombres: this.state.nombres,
-                apellidos: this.state.registro.apellidos,
-                password: this.state.registro.password,
-                email: this.state.registro.email
-            },
-            render: this.state.render,
-            status: this.state.status,
-            method: this.state.method,
-            register_f: true
+                register_f: true
             });
         }
         else {
+            this.actualizacionPassword();
             this.setState({
-                email: this.state.email,
-            password: this.state.password,
-            registro: {
-                nombres: this.state.nombres,
-                apellidos: this.state.registro.apellidos,
-                password: this.state.registro.password,
-                email: this.state.registro.email
-            },
-            render: this.state.render,
-            status: this.state.status,
-            method: this.state.method,
-            register_f: false
+                register_f: false
             });
         }
     }
@@ -257,7 +199,8 @@ class Login extends Component {
                     nombres: '',
                     apellidos: '',
                     password: '',
-                    email: ''
+                    email: '',
+                    tipo_usuario: 1
                 },
                 render: 'form-changing',
                 status: false,
@@ -272,7 +215,8 @@ class Login extends Component {
                     nombres: '',
                     apellidos: '',
                     password: '',
-                    email: ''
+                    email: '',
+                    tipo_usuario: 1
                 },
                 render: 'form-changing2',
                 status: false,
@@ -281,27 +225,13 @@ class Login extends Component {
             });
         if ( event.target.name == 'signup' && this.state.register_f){
             errorLog = 'Campos invalidos.';
-            this.setState({
-                email: this.state.email,
-                password: this.state.password,
-                registro: {
-                    nombres: this.state.nombres,
-                    apellidos: this.state.registro.apellidos,
-                    password: this.state.registro.password,
-                    email: this.state.registro.email,
-
-                },
-                render: this.state.render,
-                status: this.state.status,
-                method: this.state.method,
-                register_f: this.state.register_f
-            });
+            this.setState(this.state);
         }
     }
 
     render(){
-        
-        var error= null;
+        console.log(this.state);
+        var error;
         var login;
         if (!this.state.status){
             fetch('/api/validate').then(
@@ -315,17 +245,8 @@ class Login extends Component {
                             if (json.status || json.register_f){
                                 errorLog= json.response;
                                 this.setState({
-                                    email: this.state.email,
-                                    password: this.state.password,
-                                    registro: {
-                                        nombres: this.state.nombres,
-                                        apellidos: this.state.registro.apellidos,
-                                        password: this.state.registro.password,
-                                        email: this.state.registro.email
-                                    },
                                     render: 'form-log',
                                     status: json.status,
-                                    method: this.state.method,
                                     register_f: json.register_f
                                 });
                             }
@@ -402,7 +323,7 @@ class Login extends Component {
                         </div>
                         <div className="form-group">
                             <label className="roboto font-weight-bold" for="password">Confirm Password</label>
-                            <input type="text" name="password" placeholder="Password" id="password" className="form-control" onChange={this.handleChangeConfirmPassword} required></input>
+                            <input type="text" name="confirmPassword" placeholder="Confirm Password" id="confirmPassword" className="form-control" onChange={this.handleChangeConfirmPassword} required></input>
                         </div>
                         <div className="row d-flex justify-content-center">
                             {button}

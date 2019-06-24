@@ -82,7 +82,6 @@ RouterPrincipal.post("/signup", function(req,res){
   });
   //Validacion de ingreso.
   client.query(query_register,values, (err,result) => {
-    console.log(err,result);
     if (err){
       req.session.status = true;
       req.session.response= 'Error de conexion, usuario no registrado.'
