@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import fetch from 'node-fetch';
 
 var errorLog;
-var confirmPasw;
+var confirmPasw = "epa";
 
 class Login extends Component {
 
@@ -36,26 +36,6 @@ class Login extends Component {
         this.handleChangeRegistroEmail = this.handleChangeRegistroEmail.bind(this);
         this.handleChangeConfirmPassword = this.handleChangeConfirmPassword.bind(this);
         this.handleMethod = this.handleMethod.bind(this);
-        this.actualizacionEmail = this.actualizacionEmail.bind(this);
-        this.actualizacionPassword = this.actualizacionPassword.bind(this);
-    }
-
-    actualizacionEmail(){
-        if (confirmPasw != this.state.registro.password || this.state.registro.password < 6){
-            errorLog="Contraseña invalida."
-            this.setState({
-                register_f: true
-            });
-        }
-    }
-
-    actualizacionPassword(){
-        if (!( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(this.state.registro.email) || this.state.registro.email == '')){
-            errorLog="Email invalido para registro";
-            this.setState({
-                register_f: true
-            });
-        }
     }
 
     handleChangeEmail(event){
@@ -106,7 +86,7 @@ class Login extends Component {
 
     handleChangeRegistroPassword(event){
         if (event.target.value.length < 6){
-            errorLog="Password invalida"
+            errorLog="Contraseña invalida"
             this.setState({
                 registro: {
                     nombres: this.state.registro.nombres,
@@ -119,7 +99,6 @@ class Login extends Component {
             });
         }
         else{
-            this.actualizacionPassword();
             this.setState({
                 registro: {
                     nombres: this.state.registro.nombres,
@@ -135,7 +114,6 @@ class Login extends Component {
 
     handleChangeRegistroEmail(event){
         if ( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(event.target.value) || event.target.value == ''){
-            this.actualizacionEmail();
             this.setState({
                 registro: {
                     nombres: this.state.registro.nombres,
@@ -183,7 +161,6 @@ class Login extends Component {
             });
         }
         else {
-            this.actualizacionPassword();
             this.setState({
                 register_f: false
             });
