@@ -9,7 +9,7 @@ class Navbar extends Component {
     return(
       <nav className="Navbar navbar navbar-expand-lg navbar-light bg-dark">
         <a class="navbar-brand text-light" href="#">Navbar</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <button class="navbar-toggler text-light" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
 
@@ -36,7 +36,7 @@ class Navbar extends Component {
               </li>
             </Link>
           </ul>
-          <ul class="navbar-nav mr-auto">
+          <ul class="navbar-nav nav-final">
             <Link to='/profile'>
               <li class="nav-item active">
                 <a class="nav-link text-light">Perfil</a>

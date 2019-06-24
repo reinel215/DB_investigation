@@ -1,2 +1,8 @@
 /* CSS Para la aplicacion.*/
+a{
+    text-decoration: none;
+}
 
+.nav-final{
+    margin-right:5%;
+}
