@@ -14,7 +14,7 @@ const datos= {
 };
 const client= new Client(datos);
 
-const query_user= 'SELECT A.id_usuario, A.correo, A.hash_password, A.intentos A.id_tipo_usuario FROM Usuario as A WHERE A.correo = $1::text';
+const query_user= 'SELECT A.id_usuario, A.correo, A.hash_password, A.intentos, A.id_tipo_usuario FROM Usuario as A WHERE A.correo = $1::text';
 const reducir_intento= 'UPDATE Usuario SET intentos = $1 WHERE Usuario.id = $2';
 const reset_intento= 'UPDATE Usuario SET intentos = 3 WHERE Usuario.id = $1';
 const query_register= 'INSERT INTO Usuario (nombres, apellidos, correo, hash_password, intentos, id_tipo_usuario) VALUES ($1, $2, $3, $4, 3, 1)';
@@ -34,17 +34,19 @@ RouterPrincipal.post("/signin", (req, res) => {
   var values = [req.body.email];
   //validacion de ingreso en esta seccion.
   client.connect().catch((err) => {
+    console.log('Error en client connect. /signin: \n');
     console.log(err);
-    req.session.status = true;
+    req.session.api_response =true;
     req.session.response = err;
     req.session.save();
   });
   //Validacion de ingreso.
   client.query(query_user,values, (err,result) => {
     if (err){
+      console.log('Error en client query. /signin: \n');
       console.log(err);
-      req.session.status = true;
       req.session.response= 'Error de conexion, usuario no encontrado.'
+      req.session.api_response = true;
       req.session.save();
     }
     else{
@@ -52,7 +54,7 @@ RouterPrincipal.post("/signin", (req, res) => {
       if(result.rows[0] && result.rows[0].intentos > 0){
         //comprobacion de uso de password correcto. Caso incorrecto
         if (result.rows[0].hash_password != md5(req.body.password)){
-          req.session.status = true;
+          req.session.api_response = true
           req.session.response = 'Clave invalida';
           values =[result.rows[0].intentos--, result.rows[0].id_usuario];
           client.query(reducir_intento, values).then( result => console.log(result)).catch(e => console.log(e));
@@ -71,7 +73,7 @@ RouterPrincipal.post("/signin", (req, res) => {
       }
       //Usuario inexistente, invalido.
       else{
-        req.session.status = true;
+        req.session.api_response = true;
         req.session.response= 'Usuario invalido.';
       }
     }
@@ -85,21 +87,25 @@ RouterPrincipal.post("/signin", (req, res) => {
 
 
 RouterPrincipal.post("/signup", function(req,res){
-  const values = [req.body.nombres, req.body.apellidos, req.body.email, md5(req.body.password)];
+  const values = [req.body.nombres, req.body.apellidos, req.body.registro_email, md5(req.body.registro_password)];
   //validacion de ingreso en esta seccion.
   client.connect().catch((err) => {
-    req.session.status = true;
+    console.log('Error en client connect. /signup \n');
+    console.log(err);
+    req.session.api_response = true;
     req.session.response = 'Error al intentar conectar.'
     req.session.save();
   });
   //Validacion de ingreso.
   client.query(query_register,values, (err,result) => {
     if (err){
-      req.session.status = true;
+      console.log('Error en client query. /signup \n');
+      console.log(err);
+      req.session.api_response = true;
       req.session.response= 'Error de conexion, usuario no registrado.'
     }
     else{
-      req.session.status = false;
+      req.session.api_response = true;
       req.session.response= 'Registro completado.';
     }
     req.session.save();

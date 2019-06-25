@@ -15,9 +15,15 @@ const client= new Client(datos);
 const query_cont_proy= 'SELECT COUNT(*) FROM Proyecto as A JOIN Usuario_Proyecto B ON B.id_proyecto = A.id_proyecto WHERE B.id_usuario = $1';
 
 RouterPrincipal.get("/validate", (req, res) => {
-  res.send({status: req.session.status,
-    response: req.session.response,
-    register_f: req.session.register_f
+  console.log(req.session);
+  let response=req.session.response;
+  let api_response=req.session.api_response;
+  req.session.response= '';
+  req.session.api_response= false;
+  req.session.save();
+  res.send({
+    response: response,
+    api_response: api_response
   });
 });
 
