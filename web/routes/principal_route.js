@@ -14,7 +14,7 @@ const datos= {
 };
 const client= new Client(datos);
 
-const query_user= 'SELECT A.id_usuario, A.correo, A.hash_password, A.intentos FROM Usuario as A WHERE A.correo = $1::text';
+const query_user= 'SELECT A.id_usuario, A.correo, A.hash_password, A.intentos A.id_tipo_usuario FROM Usuario as A WHERE A.correo = $1::text';
 const reducir_intento= 'UPDATE Usuario SET intentos = $1 WHERE Usuario.id = $2';
 const reset_intento= 'UPDATE Usuario SET intentos = 3 WHERE Usuario.id = $1';
 const query_register= 'INSERT INTO Usuario (nombres, apellidos, correo, hash_password, intentos, id_tipo_usuario) VALUES ($1, $2, $3, $4, 3, 1)';
@@ -66,6 +66,7 @@ RouterPrincipal.post("/signin", (req, res) => {
           req.session.email = result.rows[0].correo;
           req.session.nombres = result.rows[0].nombres;
           req.session.apellidos = result.rows[0].apellidos;
+          req.session.id_tipo_usuario = result.rows[0].id_tipo_usuario;
         }
       }
       //Usuario inexistente, invalido.
