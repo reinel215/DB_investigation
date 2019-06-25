@@ -40,7 +40,7 @@ class Login extends Component {
             else
                 clase= "col-12 badge badge-danger mt-3";
             log= (<div className="row container d-flex justify-content-center error-bg">
-                        <span class={clase}> {this.state.response} </span>
+                        <span className={clase}> {this.state.response} </span>
                     </div>);
             button=(<button name="signup" type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6" onClick={this.handleMethod} disabled>Sign-Up</button>);
         }
@@ -183,7 +183,7 @@ class Login extends Component {
                     <div>
                         <form className={this.state.render} action="/signin" method="POST">
                             <div className="form-group">
-                                <label className="roboto font-weight-bold" for="email font-weight-bold">Email</label>
+                                <label className="roboto font-weight-bold" for="email">Email</label>
                                 <input type="text" name="email" placeholder="Email" id="email" className="form-control" onChange={this.handleChange} value={this.state.email} required></input>
                             </div>
                             <div className="form-group">
@@ -206,23 +206,23 @@ class Login extends Component {
                 <div>
                     <form className={this.state.render} action="/signup" method="POST">
                         <div className="form-group">
-                            <label className="roboto font-weight-bold" for="email font-weight-bold">Nombres</label>
+                            <label className="roboto font-weight-bold" for="nombres">Nombres</label>
                             <input type="text" name="nombres" placeholder="Nombres" id="nombres" className="form-control" onChange={this.handleChange} value={this.state.nombres} required></input>
                         </div>
                         <div className="form-group">
-                            <label className="roboto font-weight-bold" for="email font-weight-bold">Apellidos</label>
+                            <label className="roboto font-weight-bold" for="apellidos">Apellidos</label>
                             <input type="text" name="apellidos" placeholder="Apellidos" id="apellidos" className="form-control" onChange={this.handleChange} value={this.state.apellidos} required></input>
                         </div>
                         <div className="form-group">
-                            <label className="roboto font-weight-bold" for="email font-weight-bold">Email</label>
+                            <label className="roboto font-weight-bold" for="registro_email">Email</label>
                             <input type="text" name="registro_email" placeholder="Email" id="registro_email" className="form-control" onChange={this.handleChange} value={this.state.registro_email} required></input>
                         </div>
                         <div className="form-group">
-                            <label className="roboto font-weight-bold" for="password">Password</label>
+                            <label className="roboto font-weight-bold" for="registro_password">Password</label>
                             <input type="password" name="registro_password" placeholder="Password" id="registro_password" className="form-control" onChange={this.handleChange} value={this.state.registro_password} required></input>
                         </div>
                         <div className="form-group">
-                            <label className="roboto font-weight-bold" for="password">Confirm Password</label>
+                            <label className="roboto font-weight-bold" for="registro_confirm">Confirm Password</label>
                             <input type="password" name="registro_confirm" placeholder="Confirm Password" id="registro_confirm" className="form-control" onChange={this.handleChange} value={this.state.registro_confirm} required></input>
                         </div>
                         <div className="row d-flex justify-content-center">
