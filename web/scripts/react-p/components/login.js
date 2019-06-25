@@ -152,8 +152,6 @@ class Login extends Component {
     }
 
     render(){
-        console.log(this.state);
-        console.log('entre');
         this.verificacion();
         var login;
         var comps= this.error()
@@ -190,7 +188,7 @@ class Login extends Component {
                             </div>
                             <div className="form-group">
                                 <label className="roboto font-weight-bold" for="password">Password</label>
-                                <input type="text" name="password" placeholder="Password" id="password" className="form-control" onChange={this.handleChange} value={this.state.password} required></input>
+                                <input type="password" name="password" placeholder="Password" id="password" className="form-control" onChange={this.handleChange} value={this.state.password} required></input>
                             </div>
                             <div className="row d-flex justify-content-center">
                                 <button name="login" type="submit" className="roboto font-weight-bold btn btn-info btn-sp col-sm-6" onClick={this.handleMethod}>Sign-In</button>
@@ -221,11 +219,11 @@ class Login extends Component {
                         </div>
                         <div className="form-group">
                             <label className="roboto font-weight-bold" for="password">Password</label>
-                            <input type="text" name="registro_password" placeholder="Password" id="registro_password" className="form-control" onChange={this.handleChange} value={this.state.registro_password} required></input>
+                            <input type="password" name="registro_password" placeholder="Password" id="registro_password" className="form-control" onChange={this.handleChange} value={this.state.registro_password} required></input>
                         </div>
                         <div className="form-group">
                             <label className="roboto font-weight-bold" for="password">Confirm Password</label>
-                            <input type="text" name="registro_confirm" placeholder="Confirm Password" id="registro_confirm" className="form-control" onChange={this.handleChange} value={this.state.registro_confirm} required></input>
+                            <input type="password" name="registro_confirm" placeholder="Confirm Password" id="registro_confirm" className="form-control" onChange={this.handleChange} value={this.state.registro_confirm} required></input>
                         </div>
                         <div className="row d-flex justify-content-center">
                             {button}
