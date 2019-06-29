@@ -11,7 +11,7 @@ class Usercard extends Component {
         contador_proy: 0};
     }
 
-    componentWillMount(){
+    componentDidMount(){
         if (!this.state.nombre || this.state.tipo_usuario == 0){
             fetch('/api/user_info').then(
                 res => {
@@ -32,14 +32,12 @@ class Usercard extends Component {
     render(){
 
         return(
-        <div className="Usercard mr-auto ml-1">
-            <div class="card" style="width: 18rem;">
-                <h5 class="card-header">Información Usuario</h5>
-                <img class="card-img-top" src="..." alt="Card image cap"/>
-                <div class="card-body">
-                    <h5 class="card-title">{this.state.nombre}</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+        <div className="Usercard mr-auto">
+            <div className="card">
+                <h5 className="card-header">Información Usuario</h5>
+                <div className="card-body">
+                    <h3 className="card-title">{this.state.nombre}</h3>
+                    <p className="card-text">Contador de proyectos : <span className="badge badge-danger mx-auto"> {this.state.contador_proy}</span></p>
                 </div>
             </div>
         </div>

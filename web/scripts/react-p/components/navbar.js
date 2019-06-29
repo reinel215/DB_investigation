@@ -8,43 +8,43 @@ class Navbar extends Component {
     //Debe incluirse a traves de switch y link los diferentes componentes a renderizar en vez de <a>
     return(
       <nav className="Navbar navbar navbar-expand-lg navbar-light bg-dark">
-        <a class="navbar-brand text-light" href="#">Navbar</a>
-          <button class="navbar-toggler text-light" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+          <a className="navbar-brand text-light font-weight-bold" href="#">UCABINV</a>
+          <button className="navbar-toggler text-light font-weight-bold" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
           </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <Link to='/home'>
-              <li class="nav-item active">
-                <a class="nav-link text-light">Principal <span class="sr-only">(current)</span></a>
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul className="navbar-nav mr-auto">
+            <Link to='/home' className="nav-link">
+              <li className="nav-item text-light font-weight-bold active">
+                Principal <span className="sr-only">(current)</span>
               </li>
             </Link>
-            <Link to='/corrections'>
-              <li class="nav-item">
-                <a class="nav-link text-light">Correcciones</a>
+            <Link to='/home/corrections' className="nav-link">
+              <li className="nav-item text-light font-weight-bold">
+                Correcciones
               </li>
             </Link>
-            <Link to='/statistics'>
-              <li class="nav-item">
-                <a class="nav-link text-light">Estadisticas</a>
+            <Link to='/home/statistics' className="nav-link">
+              <li className="nav-item text-light font-weight-bold">
+                Estadisticas
               </li>
             </Link>
-            <Link to='/settings'>
-              <li class="nav-item">
-                <a class="nav-link text-light">Configuración</a>
+            <Link to='/home/settings' className="nav-link">
+              <li className="nav-item text-light font-weight-bold">
+                Configuración
               </li>
             </Link>
           </ul>
-          <ul class="navbar-nav nav-final">
-            <Link to='/profile'>
-              <li class="nav-item active">
-                <a class="nav-link text-light">Perfil</a>
+          <ul className="navbar-nav nav-final">
+            <Link to='/home/profile' className="nav-link">
+              <li className="nav-item text-light font-weight-bold active">
+                Perfil
               </li>
             </Link>
-            <Link to='/corrections'>
-              <li class="nav-item">
-                <a class="nav-link text-light">Cerrar sesión</a>
+            <Link to='/home/corrections' className="nav-link">
+              <li className="nav-item text-light font-weight-bold">
+                Cerrar sesión
               </li>
             </Link>
           </ul>

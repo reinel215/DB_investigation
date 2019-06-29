@@ -12,14 +12,13 @@ const datos= {
   password: 'UCABINV',
   port: 5432,
 };
-const client= new Client(datos);
 
-const query_user= 'SELECT A.id_usuario, A.correo, A.hash_password, A.intentos, A.id_tipo_usuario FROM Usuario as A WHERE A.correo = $1::text';
+const query_user= 'SELECT A.id_usuario, A.nombres, A.apellidos, A.correo, A.hash_password, A.intentos, A.id_tipo_usuario FROM Usuario as A WHERE A.correo = $1::text';
 const reducir_intento= 'UPDATE Usuario SET intentos = $1 WHERE Usuario.id = $2';
 const reset_intento= 'UPDATE Usuario SET intentos = 3 WHERE Usuario.id = $1';
 const query_register= 'INSERT INTO Usuario (nombres, apellidos, correo, hash_password, intentos, id_tipo_usuario) VALUES ($1, $2, $3, $4, 3, 1)';
 
-RouterPrincipal.get("/", (req, res) =>{
+RouterPrincipal.all("/", (req, res) =>{
   res.redirect('/login');
 });
 
@@ -33,6 +32,7 @@ RouterPrincipal.get("/login", (req, res) =>{
 RouterPrincipal.post("/signin", (req, res) => {
   var values = [req.body.email];
   //validacion de ingreso en esta seccion.
+  const client= new Client(datos);
   client.connect().catch((err) => {
     console.log('Error en client connect. /signin: \n');
     console.log(err);
@@ -89,6 +89,7 @@ RouterPrincipal.post("/signin", (req, res) => {
 RouterPrincipal.post("/signup", function(req,res){
   const values = [req.body.nombres, req.body.apellidos, req.body.registro_email, md5(req.body.registro_password)];
   //validacion de ingreso en esta seccion.
+  const client= new Client(datos);
   client.connect().catch((err) => {
     console.log('Error en client connect. /signup \n');
     console.log(err);
