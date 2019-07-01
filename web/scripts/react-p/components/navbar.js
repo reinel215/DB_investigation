@@ -42,7 +42,7 @@ class Navbar extends Component {
                 Perfil
               </li>
             </Link>
-            <Link to='/home/corrections' className="nav-link">
+            <Link to='/home/logout' className="nav-link">
               <li className="nav-item text-light font-weight-bold">
                 Cerrar sesión
               </li>

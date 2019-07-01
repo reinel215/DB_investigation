@@ -13,6 +13,10 @@ const datos= {
 
 const query_cont_proy= 'SELECT COUNT(*) FROM Proyecto as A JOIN Usuario_Proyecto B ON B.id_proyecto = A.id_proyecto WHERE B.id_usuario = $1';
 const query_actions= 'SELECT Permiso.* FROM Permiso JOIN Rol ON Rol.id_permiso = Permiso.id_permiso JOIN Tipo_Usuario ON Tipo_Usuario.id_tipo_usuario = rol.id_tipo_usuario WHERE Tipo_Usuario.id_tipo_usuario = $1';
+const query_investigations= 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto WHERE Usuario_Proyecto.id_usuario = $1';
+const query_investigation='SELECT Proyecto.identificacion, count(Unidad_Informacion.id_unidad_informacion) as Cantidad_UF, Investigacion.Objetivo_General, Investigacion.Pregunta_Investigacion, Investigacion.calidad, Tipo_Investigacion.nombre as tipo_inv, Modalidad.nombre as mod, Contexto.concepcion, Contexto.poblacion, Temporalidad.descripcion as temp FROM Proyecto JOIN Unidad_Informacion ON Unidad_Informacion.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Esquema_Formulado ON Esquema_Formulado.id_investigacion = Investigacion.id_investigacion JOIN Pregunta_Modular ON Pregunta_Modular.id_pregunta_modular = Esquema_Formulado.id_pregunta_modular JOIN Tipo_Investigacion ON Tipo_Investigacion.id_tipo_investigacion = Pregunta_Modular.id_tipo_investigacion JOIN Modalidad ON Modalidad.id_tipo_investigacion = Tipo_Investigacion.id_tipo_investigacion JOIN Contexto ON Contexto.id_contexto = Investigacion.id_contexto JOIN Temporalidad ON Temporalidad.id_temporalidad = Investigacion.id_Temporalidad WHERE Proyecto.id_proyecto = $1 GROUP BY Proyecto.identificacion, Investigacion.Objetivo_General, Investigacion.Pregunta_Investigacion, Investigacion.calidad, tipo_inv, concepcion, poblacion, temp, mod';
+const query_restricciones='SELECT contenido FROM Restriccion WHERE Restriccion.id_proyecto = $1';
+const query_alcances='SELECT contenido FROM Alcance WHERE Alcance.id_proyecto = $1';
 
 RouterPrincipal.get("/validate", (req, res) => {
   let response=req.session.response;
@@ -27,6 +31,7 @@ RouterPrincipal.get("/validate", (req, res) => {
 });
 
 RouterPrincipal.get("/user_info", (req, res) => {
+  console.log('Entrada a user_info');
   const client= new Client(datos);
   let nombre= req.session.nombres + ' ' + req.session.apellidos;
   let tipo_usuario = req.session.id_tipo_usuario;
@@ -57,7 +62,7 @@ RouterPrincipal.get("/user_info", (req, res) => {
 });
 
 RouterPrincipal.get("/user_actions", (req, res) => {
-  console.log('entrada a user_Actions');
+  console.log('Entrada a user_Actions');
   const client= new Client(datos);
   var actions=[];
   values = [req.session.id_tipo_usuario];
@@ -70,9 +75,6 @@ RouterPrincipal.get("/user_actions", (req, res) => {
     if (err){
       console.log('Error en client query. /api/user_actions \n');
       console.log(err);
-      nombre='';
-      tipo_usuario=0;
-      contador_proy=0;
     }
     else{
       if ( result.rows.length >0 )
@@ -86,7 +88,128 @@ RouterPrincipal.get("/user_actions", (req, res) => {
     }
     client.end((err) => console.log('disconnected - User Actions'));
     res.send({
-      actions: actions
+      actions: actions,
+      loaded:true
+    });
+  });
+});
+
+RouterPrincipal.get("/user_investigations", (req, res) => {
+  console.log('entrada a user_investigations');
+  const client= new Client(datos);
+  var investigations=[];
+  values = [req.session.id_usuario];
+  client.connect().catch((err) => {
+    console.log('Error en client connect. /api/user_investigations \n');
+    console.log(err);
+  });
+  //Validacion de ingreso.
+  client.query(query_investigations,values, (err,result) => {
+    if (err){
+      console.log('Error en client query. /api/user_investigations \n');
+      console.log(err);
+    }
+    else{
+      if ( result.rows.length > 0 )
+        for(let i = 0; i< result.rows.length; i++){
+          investigations.push({
+            identificacion: result.rows[i].identificacion,
+            id_proyecto: result.rows[i].id_proyecto,
+            pregunta_investigacion: result.rows[i].pregunta_investigacion,
+            calidad: result.rows[i].calidad,
+            objetivo_general: result.rows[i].objetivo_general
+          })
+        }
+    }
+    client.end((err) => console.log('disconnected - User Investigations'));
+    res.send({
+      investigations: investigations,
+      loaded:true
+    });
+  });
+});
+
+RouterPrincipal.post("/user_investigation", (req, res) => {
+  const client= new Client(datos);
+  var investigation={};
+  values = [req.body.id];
+  client.connect().catch((err) => {
+    console.log('Error en client connect. /api/user_investigation \n');
+    console.log(err);
+  });
+  //Validacion de ingreso.
+  client.query(query_investigation,values, (err,result) => {
+    if (err){
+      console.log('Error en client query. /api/user_investigation \n');
+      console.log(err);
+    }
+    else{
+      if ( result.rows.length > 0 ){
+        investigation={
+          identificacion: result.rows[0].identificacion,
+          cantidad_uf: result.rows[0].cantidad_uf,
+          objetivo_general: result.rows[0].objetivo_general,
+          contexto:{
+            poblacion: result.rows[0].poblacion,
+            concepcion: result.rows[0].concepcion,
+            temporalidad: result.rows[0].temp
+          },
+          mod: result.rows[0].mod,
+          tipo_inv:result.rows[0].tipo_inv,
+          calidad: result.rows[0].calidad,
+          cantidad_uf: result.rows[0].cantidad_uf
+        }
+      }
+      console.log(investigation);
+    }
+    client.end((err) => console.log('disconnected - User Investigation'));
+    res.send({
+      investigation: investigation,
+      loaded:true
+    });
+  });
+});
+
+RouterPrincipal.post("/user_investigation_restricciones_alcances", (req, res) => {
+  const client= new Client(datos);
+  var alcances=[];
+  var restricciones=[];
+  values = [req.body.id];
+  client.connect().catch((err) => {
+    console.log('Error en client connect. /api/user_investigation_restricciones_alcances \n');
+    console.log(err);
+  });
+  //Validacion de ingreso.
+  client.query(query_restricciones,values, (err,result) => {
+    if (err){
+      console.log('Error en client query. /api/user_investigation_restricciones_alcances \n');
+      console.log(err);
+    }
+    else{
+      if ( result.rows.length > 0 ){
+        for(let i=0; i< result.rows.length;i++){
+          restricciones.push(result.rows[i].contenido);
+        }
+      }
+    }
+  });
+  client.query(query_alcances,values, (err,result) => {
+    if (err){
+      console.log('Error en client query. /api/user_investigation_restricciones_alcances \n');
+      console.log(err);
+    }
+    else{
+      if ( result.rows.length > 0 ){
+        for(let i=0; i< result.rows.length;i++){
+          alcances.push(result.rows[i].contenido);
+        }
+      }
+    }
+    console.log(alcances);
+    client.end((err) => {console.log(err)});
+    res.send({
+      alcances: alcances,
+      restricciones: restricciones
     });
   });
 });

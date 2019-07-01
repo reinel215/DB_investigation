@@ -9,8 +9,19 @@
     width:100%;
 }
 
+.nav-link:hover{
+  margin-left: 2%;
+  opacity:0.4;
+  transition: opacity 500ms, background-color 400ms, margin-left 300ms;
+}
+
 .nav-final{
     margin-right:5%;
+}
+
+.card-Investigation{
+  opacity: 1;
+  z-index:6;
 }
 
 .principal-content{
@@ -27,38 +38,70 @@
     margin-right:2%;
 }
 
-/*Animaciones de entrada de componentes*/
+.Selection{
+  position: absolute;
+  top:0;
+  left:0;
+  height: 100%;
+  width:100%;
+  z-index:5;
+}
 
-.fade-appear{
-    z-index: 1;
-    opacity:0;
-  }
-  
-  .fade-appear.fade-appear-active{
-    opacity:1;
-    -webkit-transition: opacity 1000ms linear;
-    -moz-transition: opacity 1000ms linear;
-    -o-transition: opacity 1000ms linear;
-  }
-  
-  .fade-enter{
-    opacity:0;
-  }
-  
-  .fade-enter.fade-enter-active{
-    opacity:1;
-    -webkit-transition: opacity 300ms linear 300ms;
-  }
-  
-  .fade-exit{
-    opacity:1;
-  }
-  
-  .fade-exit.fade-exit-active{
-    opacity:0;
-    -webkit-transition: opacity 300ms linear;
-  }
-  
-  .fade-exit-done{
-    opacity:0;
-  }
+.selection-bg{
+  background-color: rgba(0,0,0,0.7);
+}
+
+.button-exit{
+  border: none;
+  position:absolute;
+  right:0;
+  top:0;
+  color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
+  transition: background-color 200ms, color 200ms;
+}
+
+.button-exit:hover{
+  background-color:rgba(0, 0, 0, 0.9);
+  transition: background-color 200ms;
+}
+
+.button-select{
+  text-decoration: none;
+  opacity:1;
+  transition: opacity 200ms;
+}
+
+.button-select:hover{
+  opacity: 0.3;
+  transition: opacity 200ms;
+}
+
+.section-left-card-investigation{
+  border-right-color: rgba(19, 19, 19, 0.5);
+  border-right-width: 2px;
+  border-right-style: solid;
+}
+
+.contexto-div{
+  border-top-color: rgba(19, 19, 19, 0.527);
+  border-bottom-color: rgba(19, 19, 19, 0.527);
+  border-top-style:solid;
+  border-bottom-style:solid;
+  border-top-width: 2px;
+  border-bottom-width: 1px;
+}
+
+.title-proy{
+  border-top-left-radius: 25%;
+}
+
+.calidad-section{
+  border-width: 3px 0px;
+  border-color: white;
+  border-style: solid;
+}
+
+.Investigation{
+  margin-bottom: 15%;
+}

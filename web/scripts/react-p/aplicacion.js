@@ -4,7 +4,8 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import Navbar from './components/navbar.js';
 import Usercard from './components/usercard.js';
 import Accion from './components/accion.js';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import Selection from './components/selection.js';
+import Investigation from './components/investigation.js';
 
 class Aplicacion extends Component {
 
@@ -14,20 +15,14 @@ class Aplicacion extends Component {
         <div className="Aplicacion">
           <Router>
             <Navbar></Navbar>
+            <Route path="/home/visualization" exact component={Selection}></Route>
             <div className="bg-principal container-fluid principal-content d-flex justify-content-start">
               <div className="container margin-content col-md-3">
                 <Usercard></Usercard>
               </div>
               <div className="container margin-content col-md-8">
-                <CSSTransition
-                  in={true}
-                  appear={true}
-                  timeout={1000}
-                  classNames="fade">
-
-                  <Route path="/home" exact component={Accion} key="1"></Route>
-                
-                </CSSTransition>
+                  <Route path="/home" exact component={Accion}></Route>
+                  <Route path="/home/investigation/:id" component={Investigation}></Route>
               </div>
             </div>
           </Router>

@@ -37,7 +37,7 @@ class Usercard extends Component {
                 <h5 className="card-header">Información Usuario</h5>
                 <div className="card-body">
                     <h3 className="card-title">{this.state.nombre}</h3>
-                    <p className="card-text">Contador de proyectos : <span className="badge badge-danger mx-auto"> {this.state.contador_proy}</span></p>
+                    <p className="card-text">Contador de proyectos : <span className="badge badge-primary mx-auto"> {this.state.contador_proy}</span></p>
                 </div>
             </div>
         </div>

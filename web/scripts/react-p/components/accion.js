@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import fetch from 'node-fetch';
 import {Link} from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 //Router para renderizar los componentes segun direccion de los mismos.
 
 class Accion extends Component {
@@ -15,7 +16,6 @@ class Accion extends Component {
 
     componentDidMount(){
         if (!this.state.loaded){
-            console.log('no entra aca\n\n');
             fetch('/api/user_actions').then(
                 res => {
                     if (res.status == 200)
@@ -25,7 +25,7 @@ class Accion extends Component {
                 }).then(json => {
                     this.setState({
                         actions:json.actions,
-                        loaded: true
+                        loaded: json.loaded
                     });
                 });
         }
@@ -53,7 +53,7 @@ class Accion extends Component {
                                     <h3 className="card-title">{action.nombre}</h3>
                                     <p className="text-justify">{action.descripcion}</p>
                                     <button type="button" class="btn btn-primary">
-                                        <Link to={action.ruta} className="nav-link text-light font-weight-bold">
+                                        <Link to={action.ruta} className="button-select text-light font-weight-bold">
                                             Presióname
                                         </Link>
                                     </button>
@@ -67,7 +67,7 @@ class Accion extends Component {
 
         return(
         <div className="Accion mx-auto">
-            {content}
+                {content}
         </div>
     );}
 
