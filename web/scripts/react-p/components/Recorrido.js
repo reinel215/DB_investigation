@@ -17,7 +17,6 @@ class Recorrido extends Component {
     }
 
     handleSelecction(event){
-        console.log('Se coloco la cita:' + event.target.id);
         this.setState({
             estadio: this.state.estadios[parseInt(event.target.id)].id_estadio_aplicado
         });
@@ -89,7 +88,7 @@ class Recorrido extends Component {
                 );
             }
             else{
-                content=(<h3 className="my-auto mx-auto">No hay un recorrido definido</h3>)
+                content=(<h3 className="my-auto mx-auto badge badge-info">No hay un recorrido definido</h3>)
             }
         }
         else{

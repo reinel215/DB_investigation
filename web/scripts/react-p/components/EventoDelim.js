@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import fetch from 'node-fetch';
 //Router para renderizar los componentes segun direccion de los mismos.
+import Sinergia from './Sinergia.js';
 
-class unidades_EventoDelim extends Component {
+class EventoDelim extends Component {
 
     constructor(props){
         super(props);
+        const id = props.estadio_aplicado;
         this.state={
-            id: -1,
+            id: id,
             eventos: [],
             loaded: false,
             evento: -1
@@ -117,8 +119,8 @@ class unidades_EventoDelim extends Component {
                                 })
                             }
                         </div>
-                        <div className="col-md-8">
-
+                        <div className="col-md-8 overflow-auto">
+                            <Sinergia evento_delimitado={this.state.evento}></Sinergia>
                         </div>
                     </div>
                 );
@@ -126,14 +128,23 @@ class unidades_EventoDelim extends Component {
             else{
                 if (this.state.eventos.length == 0)
                     content=(
-                    <div className="container-fluid bg-light text-dark d-flex justify-content-center h-100 align-items-center">
-                        <h3 className="my-auto mx-auto">No hay Eventos delimitados</h3>
+                    <div className="container bg-light text-dark d-flex justify-content-center h-100 align-items-center">
+                        <h3 className="my-auto mx-auto badge badge-info">No hay Eventos delimitados</h3>
                     </div>);
+                else{
+                    content =(
+                        <div className="container row align-items-center d-flex justify-content-center h-100 align-items-center">
+                            <div className="spinner-border text-dark" role="status">
+                                <span className="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                    );
+                }
             }
         }
         else{
             content =(
-                <div className="container-fluid row align-items-center d-flex justify-content-center h-100 align-items-center">
+                <div className="container row align-items-center d-flex justify-content-center h-100 align-items-center">
                     <div className="spinner-border text-dark" role="status">
                         <span className="sr-only">Loading...</span>
                     </div>
@@ -149,4 +160,4 @@ class unidades_EventoDelim extends Component {
 
 }
 
-export default unidades_EventoDelim;
+export default EventoDelim;

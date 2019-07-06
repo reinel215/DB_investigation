@@ -21,6 +21,7 @@ const query_unidades= 'SELECT Unidad_Informacion.id_unidad_informacion, Unidad_I
 const query_citas='SELECT Cita.cita, Cita.delimitacion, Categoria_Uso.nombre as Categoria, Entidad_Uso.nombre as Entidad FROM Cita LEFT JOIN Categoria_Uso ON Categoria_Uso.id_categoria_uso = Cita.id_categoria_uso LEFT JOIN Direccion_Uso ON Direccion_Uso.id_direccion_uso = cita.id_direccion_uso LEFT JOIN Entidad_Uso ON Entidad_Uso.id_entidad_uso = Direccion_Uso.id_entidad_uso WHERE Cita.id_unidad_informacion = $1';
 const query_investigacion_estadios= 'SELECT Estadio_Aplicado.id_estadio_aplicado, Objetivo_Especifico_Det.contenido, Estadio_Aplicado.posicion, Estadio.nombre FROM Estadio_Aplicado JOIN Estadio ON Estadio.id_estadio = Estadio_Aplicado.id_estadio JOIN Objetivo_Especifico_Det ON Estadio_aplicado.id_estadio_aplicado = Objetivo_Especifico_Det.id_estadio_aplicado WHERE Estadio_Aplicado.id_investigacion = $1 ORDER BY Estadio_Aplicado.posicion;'; 
 const query_estadio_eventos= 'SELECT Evento.nombre as evento, Clase_Evento.nombre as clase_Evento, Abordaje.nombre as abordaje, Tipo_Evento.nombre as tipo_evento, Evento_Delimitado.descripcion, Evento_Delimitado.id_evento_delimitado FROM Evento_Delimitado JOIN Evento ON Evento.id_evento = Evento_Delimitado.id_evento JOIN Clase_Evento ON Clase_Evento.id_clase_evento = Evento_Delimitado.id_clase_Evento JOIN Abordaje ON Abordaje.id_Abordaje = Evento_Delimitado.id_abordaje JOIN Tipo_Evento ON Tipo_Evento.id_tipo_evento = Evento_Delimitado.id_tipo_evento WHERE Evento_Delimitado.id_estadio_aplicado = $1';
+const query_evento_sinergias= 'SELECT Clase_Sinergia.nombre as clase_sinergia, Sinergia.nombre as sinergia, Instrumento.nombre as instrumento, Sinergia.id_sinergia FROM Sinergia JOIN Clase_Sinergia ON Clase_Sinergia.id_clase_sinergia = Sinergia.id_clase_sinergia JOIN Aplicacion_Instrumental ON Aplicacion_Instrumental.id_sinergia = Sinergia.id_sinergia JOIN Instrumento ON Instrumento.id_instrumento = Aplicacion_Instrumental.id_instrumento WHERE Sinergia.id_evento_delimitado = $1';
 
 RouterPrincipal.get("/validate", (req, res) => {
   let response=req.session.response;
@@ -344,6 +345,38 @@ RouterPrincipal.post("/estadio_eventos", (req, res) => {
     client.end((err) => {console.log('[+]disconnected - eventos en estadio')});
     res.send({
       eventos: eventos
+    });
+  });
+});
+
+RouterPrincipal.post("/evento_sinergias", (req, res) => {
+  console.log('[+]Entrada sinergias de cierto evento');
+  const client= new Client(datos);
+  var sinergias=[];
+  values = [req.body.id];
+  client.connect().catch((err) => {
+    console.log('[-]Error en client connect. \n');
+    console.log(err);
+  });
+  //Validacion de ingreso.
+  client.query(query_evento_sinergias, values, (err,result) => {
+    if (err){
+      console.log('[-]Error en client query.  \n');
+      console.log(err);
+    }
+    else{
+        for (let i= 0; i < result.rows.length; i++){
+          sinergia={};
+          sinergia.clase_sinergia = result.rows[i].clase_sinergia;
+          sinergia.instrumento = result.rows[i].instrumento;
+          sinergia.sinergia = result.rows[i].sinergia
+          sinergia.id_sinergia = result.rows[i].id_sinergia;
+          sinergias.push(sinergia);
+        }
+    }
+    client.end((err) => {console.log('[+]disconnected - sinergias de evento')});
+    res.send({
+      sinergias: sinergias
     });
   });
 });
