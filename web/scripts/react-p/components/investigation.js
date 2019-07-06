@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 //Router para renderizar los componentes segun direccion de los mismos.
-import {Router, Switch, Route, Link} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 var linkUF;
 var linkINV;

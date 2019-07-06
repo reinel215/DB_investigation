@@ -130,6 +130,19 @@
   animation-duration: 500ms;
 }
 
+.Estadio-Title{
+  position:relative;
+  top:0;
+  width: 100%;
+  margin-bottom: 2%;
+  border-bottom-style: solid;
+  border-bottom-width: 3px;
+}
+
+.Recorrido{
+  width:90%;
+}
+
 @keyframes extension{
   0%{
     transform: scaleX(0);
