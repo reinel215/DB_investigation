@@ -77,6 +77,12 @@
   transition: opacity 200ms;
 }
 
+.button-exit{
+  position: absolute;
+  top:0;
+  right:0;
+}
+
 .section-left-card-investigation{
   border-right-color: rgba(19, 19, 19, 0.5);
   border-right-width: 2px;
@@ -104,4 +110,31 @@
 
 .Investigation{
   margin-bottom: 15%;
+}
+
+.section-left{
+  border-right-width: 5px;
+  border-right-style: solid;
+  border-right-color: rgba(19, 19, 19, 0.5);
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.contenedor-uf{
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.content-extended{
+  animation-name: extension;
+  animation-duration: 500ms;
+}
+
+@keyframes extension{
+  0%{
+    transform: scaleX(0);
+  }
+  100%{
+    transform: scaleX(1);
+  }
 }

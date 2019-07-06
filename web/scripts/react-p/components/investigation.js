@@ -18,8 +18,9 @@ class Investigation extends Component {
             alcances: [],
             restricciones: []
         };
-        linkUF="/home/investigation/" + this.props.match.params + "/UF"
-        linkUF="/home/investigation/" + this.props.match.params + "/Est"
+        linkUF="/home/investigation/" + this.props.match.params.id + "/UF";
+        linkINV="/home/investigation/" + this.props.match.params.id + "/INV";
+        console.log(linkUF);
     }
 
     componentDidMount(){
@@ -87,7 +88,7 @@ class Investigation extends Component {
                     calidadBadge= (<span className="badge badge-success mx-auto badge-calidad my-1 mx-auto text-center">{investigation.calidad}</span>);
                 }
             console.log(investigation);
-            content= (<div className="container card bg-dark text-light">
+            content= (<div className="container card bg-dark text-light content-extended">
                 <h2 className="card-header row col-12 bg-primary text-light title-proy">{investigation.identificacion}</h2>
                 <div className="card-body">
                     <div className="list-group list-group-flush row mb-2">

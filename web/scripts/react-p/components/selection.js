@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import fetch from 'node-fetch';
 //Router para renderizar los componentes segun direccion de los mismos.
-import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
+import {Router, Switch, Route, Link} from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 class Selection extends Component {
@@ -12,6 +12,7 @@ class Selection extends Component {
             investigations: [],
             loaded: false
         };
+        console.log(props);
     }
 
     componentDidMount(){
@@ -46,6 +47,11 @@ class Selection extends Component {
                                 })
                             }
                         </ol>
+                        <button
+                            className="button-select button-exit"
+                            onClick={this.props.history.goBack}>
+                                X
+                            </button>
                         <div className="carousel-inner">
                             {
                                 this.state.investigations.map((investigation, i) =>{
