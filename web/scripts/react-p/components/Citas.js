@@ -67,14 +67,14 @@ class Citas extends Component {
             else{
                 if (this.state.citas.length == 0)
                     content=(
-                    <div className="container-fluid bg-light text-dark">
+                    <div className="container-fluid bg-light text-dark d-flex justify-content-center align-items-center">
                         <h3 className="my-auto mx-auto">No hay citas en esta unidad de informacion</h3>
                     </div>);
             }
         }
         else{
             content =(
-                <div className="container-fluid row align-items-center d-flex justify-content-center my-auto">
+                <div className="container-fluid row align-items-center d-flex justify-content-center align-items-center h-100">
                     <div className="spinner-border text-dark" role="status">
                         <span className="sr-only">Loading...</span>
                     </div>

@@ -52,32 +52,32 @@ class UnidadInfo extends Component {
         if(this.state.loaded){
             if(this.state.unidades.length > 0){
                 content=(
-                    <div className="container row w-75 h-75 p-2 contenedor-uf bg-dark content-extended">
+                    <div className="container row w-75 h-75 p-2 contenedor-uf bg-dark content-extended pb-2">
                         <div className="col-md-6 container overflow-auto section-left">
                             {
                                 this.state.unidades.map((unidad, i) => {
                                     if ( this.state.unidad != unidad.id_unidad_informacion){
-                                        return(<button className="w-100" onClick={this.handleSelecction} id={i}>
-                                            <div className="card unidad_info_card h-25 w-100 bg-secondary" id={i}>
+                                        return(<button className="w-100 btn-primary" onClick={this.handleSelecction} id={i}>
+                                            <div className="card unidad_info_card h-25 w-100 bg-light text-dark" id={i}>
                                                 <h4 className="card-header" id={i}>{unidad.titulo}</h4>
                                                 <div className="card-body" id={i}>
                                                     <p id={i}>Autor: {unidad.autor}</p>
                                                 </div>
                                                 <div className="card-footer text-muted" id={i}>
-                                                    <p id={i}>Fecha - {unidad.fecha}</p>
+                                                    <p id={i} className="badge badge-info">Fecha - {unidad.fecha}</p>
                                                 </div>
                                             </div>
                                         </button>);
                                     }
                                     else{
-                                        return(<button className="w-100"  id={i}>
+                                        return(<button className="w-100 btn-primary"  id={i}>
                                             <div className="card unidad_info_card h-25 w-100 bg-primary text-light" id={i}>
                                                 <h4 className="card-header" id={i}>{unidad.titulo}</h4>
                                                 <div className="card-body" id={i}>
                                                     <p id={i}>Autor: {unidad.autor}</p>
                                                 </div>
                                                 <div className="card-footer text-muted" id={i}>
-                                                    <p id={i}>Fecha - {unidad.fecha}</p>
+                                                    <p id={i} className="badge badge-info">Fecha - {unidad.fecha}</p>
                                                 </div>
                                             </div>
                                         </button>);

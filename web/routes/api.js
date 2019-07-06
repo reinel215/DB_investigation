@@ -19,7 +19,8 @@ const query_restricciones='SELECT contenido FROM Restriccion WHERE Restriccion.i
 const query_alcances='SELECT contenido FROM Alcance WHERE Alcance.id_proyecto = $1';
 const query_unidades= 'SELECT Unidad_Informacion.id_unidad_informacion, Unidad_Informacion.titulo, Unidad_Informacion.autor, Unidad_Informacion.fecha FROM Unidad_Informacion JOIN Proyecto ON Proyecto.id_proyecto = Unidad_Informacion.id_proyecto WHERE Proyecto.id_proyecto = $1';
 const query_citas='SELECT Cita.cita, Cita.delimitacion, Categoria_Uso.nombre as Categoria, Entidad_Uso.nombre as Entidad FROM Cita LEFT JOIN Categoria_Uso ON Categoria_Uso.id_categoria_uso = Cita.id_categoria_uso LEFT JOIN Direccion_Uso ON Direccion_Uso.id_direccion_uso = cita.id_direccion_uso LEFT JOIN Entidad_Uso ON Entidad_Uso.id_entidad_uso = Direccion_Uso.id_entidad_uso WHERE Cita.id_unidad_informacion = $1';
-const query_investigacion_estadios= 'SELECT Estadio_Aplicado.id_estadio_aplicado, Estadio_Aplicado.posicion, Estadio.nombre FROM Estadio_Aplicado JOIN Estadio ON Estadio.id_estadio = Estadio_Aplicado.id_estadio WHERE Estadio_Aplicado.id_investigacion = $1 ORDER BY Estadio_Aplicado.posicion;'; 
+const query_investigacion_estadios= 'SELECT Estadio_Aplicado.id_estadio_aplicado, Objetivo_Especifico_Det.contenido, Estadio_Aplicado.posicion, Estadio.nombre FROM Estadio_Aplicado JOIN Estadio ON Estadio.id_estadio = Estadio_Aplicado.id_estadio JOIN Objetivo_Especifico_Det ON Estadio_aplicado.id_estadio_aplicado = Objetivo_Especifico_Det.id_estadio_aplicado WHERE Estadio_Aplicado.id_investigacion = $1 ORDER BY Estadio_Aplicado.posicion;'; 
+const query_estadio_eventos= 'SELECT Evento.nombre as evento, Clase_Evento.nombre as clase_Evento, Abordaje.nombre as abordaje, Tipo_Evento.nombre as tipo_evento, Evento_Delimitado.descripcion, Evento_Delimitado.id_evento_delimitado FROM Evento_Delimitado JOIN Evento ON Evento.id_evento = Evento_Delimitado.id_evento JOIN Clase_Evento ON Clase_Evento.id_clase_evento = Evento_Delimitado.id_clase_Evento JOIN Abordaje ON Abordaje.id_Abordaje = Evento_Delimitado.id_abordaje JOIN Tipo_Evento ON Tipo_Evento.id_tipo_evento = Evento_Delimitado.id_tipo_evento WHERE Evento_Delimitado.id_estadio_aplicado = $1';
 
 RouterPrincipal.get("/validate", (req, res) => {
   let response=req.session.response;
@@ -302,12 +303,47 @@ RouterPrincipal.post("/investigation_estadios", (req, res) => {
           estadio.posicion = result.rows[i].posicion;
           estadio.nombre = result.rows[i].nombre;
           estadio.id_estadio_aplicado = result.rows[i].id_estadio_aplicado;
+          estadio.objetivo = result.rows[i].contenido;
           estadios.push(estadio);
         }
     }
     client.end((err) => {console.log('[+]disconnected - estadios en investigaciones')});
     res.send({
       estadios: estadios
+    });
+  });
+});
+
+RouterPrincipal.post("/estadio_eventos", (req, res) => {
+  console.log('[+]Entrada eventos de cierto estadio');
+  const client= new Client(datos);
+  var eventos=[];
+  values = [req.body.id];
+  client.connect().catch((err) => {
+    console.log('[-]Error en client connect. \n');
+    console.log(err);
+  });
+  //Validacion de ingreso.
+  client.query(query_estadio_eventos, values, (err,result) => {
+    if (err){
+      console.log('[-]Error en client query.  \n');
+      console.log(err);
+    }
+    else{
+        for (let i= 0; i < result.rows.length; i++){
+          evento={};
+          evento.id_evento_delimitado = result.rows[i].id_evento_delimitado;
+          evento.tipo_evento = result.rows[i].tipo_evento;
+          evento.clase_evento = result.rows[i].clase_evento;
+          evento.descripcion = result.rows[i].descripcion;
+          evento.evento = result.rows[i].evento;
+          evento.abordaje = result.rows[i].abordaje;
+          eventos.push(evento);
+        }
+    }
+    client.end((err) => {console.log('[+]disconnected - eventos en estadio')});
+    res.send({
+      eventos: eventos
     });
   });
 });
