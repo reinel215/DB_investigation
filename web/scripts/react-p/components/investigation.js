@@ -20,7 +20,39 @@ class Investigation extends Component {
         };
         linkUF="/home/investigation/" + this.props.match.params.id + "/UF";
         linkINV="/home/investigation/" + this.props.match.params.id + "/INV";
-        console.log(linkUF);
+        this.handleCalculoCalidad= this.handleCalculoCalidad.bind(this);
+    }
+
+    descargarInforme(event){
+        fetch('/api/descarga_informe', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(this.state), // data can be `string` or {object}!
+            headers:{
+                'Content-Type': 'application/json'
+            }
+        })
+    }
+
+    handleCalculoCalidad(event){
+        fetch('/api/calculo_calidad', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(this.state), // data can be `string` or {object}!
+            headers:{
+                'Content-Type': 'application/json'
+            }
+        }).then(
+        res => {
+            if (res.status == 200)
+                return res.json()
+            else
+                return null;
+        }).then(json => {
+                var investigation = this.state.investigation;
+                investigation.calidad= json.calidad;
+                this.setState({
+                    investigation: investigation
+                });
+        });
     }
 
     componentDidMount(){
@@ -84,7 +116,7 @@ class Investigation extends Component {
                 else if (investigation.calidad > 10){
                     calidadBadge= (<span className="badge badge-primary mx-auto badge-calidad my-1 mx-auto text-center">{investigation.calidad}</span>);
                 }
-                if(investigation.calidad == 100){
+                if(investigation.calidad > 20){
                     calidadBadge= (<span className="badge badge-success mx-auto badge-calidad my-1 mx-auto text-center">{investigation.calidad}</span>);
                 }
             console.log(investigation);
@@ -110,7 +142,14 @@ class Investigation extends Component {
                         <div className="col-6 pb-2">
                             <h5 className="mx-auto text-center">Calidad</h5>
                             <div className="container d-flex justify-content-center">
-                                {calidadBadge}
+                                    {calidadBadge}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row d-flex justify-content-center mb-3 calidad-section">
+                        <div className="col-6 pb-2">
+                            <div className="container d-flex justify-content-center">
+                                    <button className="btn btn-info" onClick={this.handleCalculoCalidad}>Calcular calidad</button>
                             </div>
                         </div>
                     </div>
@@ -176,6 +215,18 @@ class Investigation extends Component {
                                         <Link to={linkINV} className="text-light">
                                             Detalle
                                         </Link>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row d-flex justify-content-center py-2 mb-2">
+                        <div className="col-10">
+                            <div className="card bg-primary text-light mx-auto">
+                                <h5 class="card-title text-center text-dark">Generar Informe</h5>
+                                <div className="card-footer d-flex justify-content-center">
+                                    <button type="button" className="btn btn-light text-dark button-select" onClick={this.descargarInforme}>
+                                        Descargar
                                     </button>
                                 </div>
                             </div>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import fetch from 'node-fetch';
+import RegistroInstrumental from './RegistroInstrumental';
 //Router para renderizar los componentes segun direccion de los mismos.
 
 class Sinergia extends Component {
@@ -87,7 +88,7 @@ class Sinergia extends Component {
                             }
                         </div>
                         <div className="col-md-6">
-
+                            <RegistroInstrumental sinergia={this.state.sinergia}></RegistroInstrumental>
                         </div>
                     </div>
                 );
