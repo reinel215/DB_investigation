@@ -21,16 +21,28 @@ class Investigation extends Component {
         linkUF="/home/investigation/" + this.props.match.params.id + "/UF";
         linkINV="/home/investigation/" + this.props.match.params.id + "/INV";
         this.handleCalculoCalidad= this.handleCalculoCalidad.bind(this);
+        this.descargarInforme = this.descargarInforme.bind(this);
     }
 
     descargarInforme(event){
+        var fileselector = document.getElementById('fileselector');
+        console.log(fileselector.value);
         fetch('/api/descarga_informe', {
             method: 'POST', // or 'PUT'
             body: JSON.stringify(this.state), // data can be `string` or {object}!
             headers:{
                 'Content-Type': 'application/json'
             }
-        })
+        }).then(
+            res => {
+                if (res.status == 200)
+                    return res.json()
+                else
+                    return null;
+            }).then(json => {
+                const proyecto = json.proyecto;
+                     
+        });
     }
 
     handleCalculoCalidad(event){
@@ -225,7 +237,8 @@ class Investigation extends Component {
                             <div className="card bg-primary text-light mx-auto">
                                 <h5 class="card-title text-center text-dark">Generar Informe</h5>
                                 <div className="card-footer d-flex justify-content-center">
-                                    <button type="button" className="btn btn-light text-dark button-select" onClick={this.descargarInforme}>
+                                    <input id="fileselector" type="file" onChange={this.descargarInforme} webkitdirectory directory multiple="false" style="display:none" />
+                                    <button type="button" className="btn btn-light text-dark button-select" onClick={document.getElementsById('fileselector').click()}>
                                         Descargar
                                     </button>
                                 </div>

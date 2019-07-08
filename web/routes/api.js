@@ -1,4 +1,3 @@
-import generador_documento from './generador_documentos.js';
 const {fetch} = require('node-fetch');
 //Ruta principal de acceso a la pagina.
 const express = require('express');
@@ -468,28 +467,35 @@ RouterPrincipal.post("/calculo_calidad", (req, res) => {
 
 //Proceso de generacion de informe y su descarga.
 RouterPrincipal.post("/descarga_informe", (req, res) => {
-  var Proyecto;
+  console.log('[+]Descarga Informe - entrada');
+  console.log('[+]Construccion de informacion');
+  var Proyecto ={};
   values = [req.body.id];
+  console.log(values);
+  const client= new Client(datos);
   client.connect().catch((err) => {
     console.log('[-]Error en client connect. \n');
     console.log(err);
   });
-  const query_proyecto = 'SELECT Proyecto.*, Problematica.nombre as problematica, Problematica.descripcion as problematica_descripcion FROM Proyecto JOIN Problematica WHERE Proyecto.id_proyecto = $1';
+  const query_proyecto = 'SELECT Proyecto.*, Problematica.nombre as problematica, Problematica.descripcion as problematica_descripcion FROM Proyecto JOIN Problematica ON Problematica.id_problematica = Proyecto.id_problematica WHERE Proyecto.id_proyecto = $1';
   client.query(query_proyecto, values, (err,result) => {
     if(err){
-      console.log('[-]error --- generando query para informe ')
+      console.log('[-]error --- en query ')
     }
     else{
+      console.log('[+]Recoleccion de datos proyecto');
+      console.log(result.rows);
       Proyecto.identificacion= result.rows[0].identificacion;
       Problematica={};
       Problematica.nombre= result.rows[0].problematica;
       Problematica.descripcion= result.rows[0].problematica;
       Problematica.causas_sintomas=[];
-      client.query('SELECT Causas_Sintomas.* FROM Causas_Sintomas JOIN Problematica ON Problematica.id_problematica = Causas_Sintomas.id_problematica JOIN Proyecto ON Proyecto.id_problematica = Problematica.id_problematica WHERE Proyecto.id_proyecto = $1', values, (err,result) => {
+      client.query('SELECT Causa_Sintoma.* FROM Causa_Sintoma JOIN Problematica ON Problematica.id_problematica = Causa_Sintoma.id_problematica JOIN Proyecto ON Proyecto.id_problematica = Problematica.id_problematica WHERE Proyecto.id_proyecto = $1', values, (err,result) => {
         if(err){
-          console.log('[-]Error --- generando query para informe -causas_sintomas');
+          console.log('[-]Error -- en query');
         }
         else{
+          console.log('[+]Recoleccion de datos causas_sintomas');
           for(let i= 0; i<result.rows.length; i++){
             causas_sintomas ={};
             causas_sintomas.nombre = result.rows[i].nombre;
@@ -501,12 +507,13 @@ RouterPrincipal.post("/descarga_informe", (req, res) => {
       Proyecto.Problematica= Problematica;
       Proyecto.alcances=[];
       //Alcances
-      client.query('SELECT Alcance.contenido JOIN Proyecto ON Proyecto.id_proyecto = Alcance.id_proyecto WHERE Proyecto.id_proyecto = $1', 
+      client.query('SELECT Alcance.contenido FROM Alcance JOIN Proyecto ON Proyecto.id_proyecto = Alcance.id_proyecto WHERE Proyecto.id_proyecto = $1', 
             values, (err,result) => {
             if(err){
               console.log('[-]Error --- generando query para informe -causas_sintomas');
             }
             else{
+              console.log('[+]Recoleccion de alcances');
               for(let i=0; i< result.rows.length; i++){
                 Proyecto.alcances.push(result.rows[i].contenido);
               }
@@ -514,23 +521,25 @@ RouterPrincipal.post("/descarga_informe", (req, res) => {
       });
       Proyecto.restricciones =[];
       //Restricciones
-      client.query('SELECT Restriccion.contenido JOIN Proyecto ON Proyecto.id_proyecto = Restriccion.id_proyecto WHERE Proyecto.id_proyecto = $1', 
+      client.query('SELECT Restriccion.contenido FROM Restriccion JOIN Proyecto ON Proyecto.id_proyecto = Restriccion.id_proyecto WHERE Proyecto.id_proyecto = $1', 
             values, (err,result) => {
             if(err){
               console.log('[-]Error --- generando query para informe -causas_sintomas');
             }
             else{
+              console.log('[+]Recoleccion de restricciones');
               for(let i=0; i< result.rows.length; i++){
                 Proyecto.restricciones.push(result.rows[i].contenido);
               }
             }
           });
       Proyecto.unidades_informacion=[]
-      client.query('SELECT Unidad_Informacion.*, Tipo_Fuente.nombre as tipo_fuente, Base_Noologica.nombre as base_noologica WHERE Unidad_Informacion.id_proyecto = $1', values, (err,result) => {
+      client.query('SELECT Unidad_Informacion.*, Tipo_Fuente.nombre as tipo_fuente, Base_Noologica.nombre as base_noologica FROM Unidad_Informacion JOIN Base_Noologica ON Base_Noologica.id_base_noologica = Unidad_Informacion.id_base_noologica JOIN Tipo_Fuente ON Tipo_Fuente.id_tipo_fuente = Unidad_Informacion.id_tipo_fuente WHERE Unidad_Informacion.id_proyecto = $1', values, (err,result) => {
         if(err){
           console.log('[-]Error --- generando query para informe -causas_sintomas');
         }
         else{
+          console.log('[+]Recoleccion de unidades de informacion');
           for(let i= 0; i<result.rows.length; i++){
             Unidad_Informacion ={};
             Unidad_Informacion.autor = result.rows[i].autor;
@@ -538,12 +547,13 @@ RouterPrincipal.post("/descarga_informe", (req, res) => {
             Unidad_Informacion.tipo_fuente = result.rows[i].tipo_fuente;
             Unidad_Informacion.base_noologica = result.rows[i].base_noologica;
             Unidad_Informacion.citas = [];
-            client.query('SELECT Citas.*, Categoria_uso.nombre as categoria_uso, sub_titulo.nombre as sub_titulo, titulo.nombre as titulo, Entidad_Uso.nombre as entidad_uso FROM Citas JOIN Categoria_Uso ON Categoria_Uso.id_categoria_uso = Citas.id_categoria_uso JOIN Sub_Titulo ON Sub_Titulo.id_sub_titulo = Citas.id_sub_titulo JOIN Titulo ON Titulo.id_titulo = Sub_Titulo.id_titulo JOIN Direccion_Uso ON Direccion_Uso.id_direccion_Uso = Citas.id_direccion_uso JOIN Entidad_Uso ON Entidad_Uso.id_entidad_uso = Direccion_Uso.id_entidad_uso WHERE Citas.id_unidad_informacion = $1',
+            client.query('SELECT Cita.*, Categoria_uso.nombre as categoria_uso, sub_titulo.nombre as sub_titulo, titulo.nombre as titulo, Entidad_Uso.nombre as entidad_uso FROM Cita JOIN Categoria_Uso ON Categoria_Uso.id_categoria_uso = Cita.id_categoria_uso JOIN Sub_Titulo ON Sub_Titulo.id_sub_titulo = Cita.id_sub_titulo JOIN Titulo ON Titulo.id_titulo = Sub_Titulo.id_titulo JOIN Direccion_Uso ON Direccion_Uso.id_direccion_Uso = Cita.id_direccion_uso JOIN Entidad_Uso ON Entidad_Uso.id_entidad_uso = Direccion_Uso.id_entidad_uso WHERE Cita.id_unidad_informacion = $1',
             [result.rows[i].id_unidad_informacion], (err, result) => {
               if(err){
                 console.log('[-]Error - unidades de informacion');
               }
               else{
+                console.log('[+]Recoleccion de citas');
                 for(let i=0; i<result.rows.length; i++){
                   cita ={};
                   cita.delimitacion = result.rows[i].delimitacion;
@@ -560,12 +570,13 @@ RouterPrincipal.post("/descarga_informe", (req, res) => {
           }
         }
       });
-      client.query('SELECT Investigacion.*, Contexto.*, Entorno_Investigacion.Descripcion as Entorno_Investigacion, Contexto_Investigacion.nombre as contexto_investigacion, Tipo_Investigacion.nombre as tipo_investigacion, Temporalidad.descripcion as temporalidad JOIN Entorno_Investigacion.id_investigacion = Investigacion.id_investigacion JOIN Contexto_Investigacion ON Contexto_Investigacion.id_contexto_investigacion = Entorno_Investigacion.id_contexto_investigacion JOIN Contexto ON Contexto.id_contexto = Investigacion.id_contexto JOIN Temporalidad ON Temporalidad.id_temporalidad = Investigacion.id_temporalidad JOIN Esquema_Formulado ON Esquema_Formulado.id_investigacion = Investigacion.id_investigacion JOIN Pregunta_Modular ON Pregunta_Modular.id_pregunta_modular = Esquema_Formulado.id_pregunta_modular JOIN Tipo_Investigacion ON Tipo_Investigacion.id_tipo_investigacion = Pregunta_Modular.id_tipo_investigacion WHERE Investigacion.id_proyecto = $1', 
+      client.query('SELECT Investigacion.*, Contexto.*, Entorno_Investigacion.Descripcion as Entorno_Investigacion, Contexto_Investigacion.nombre as contexto_investigacion, Tipo_Investigacion.nombre as tipo_investigacion, Temporalidad.descripcion as temporalidad FROM Investigacion JOIN Entorno_Investigacion ON Entorno_Investigacion.id_investigacion = Investigacion.id_investigacion JOIN Contexto_Investigacion ON Contexto_Investigacion.id_contexto_investigacion = Entorno_Investigacion.id_contexto_investigacion JOIN Contexto ON Contexto.id_contexto = Investigacion.id_contexto JOIN Temporalidad ON Temporalidad.id_temporalidad = Investigacion.id_temporalidad JOIN Esquema_Formulado ON Esquema_Formulado.id_investigacion = Investigacion.id_investigacion JOIN Pregunta_Modular ON Pregunta_Modular.id_pregunta_modular = Esquema_Formulado.id_pregunta_modular JOIN Tipo_Investigacion ON Tipo_Investigacion.id_tipo_investigacion = Pregunta_Modular.id_tipo_investigacion WHERE Investigacion.id_proyecto = $1', 
       values, (err,result) => {
         if(err){
           console.log('[-]Error --- generando query para informe -causas_sintomas');
         }
         else{
+          console.log('[+]Recoleccion de investigacion');
           Investigacion={};
           Investigacion.pregunta_investigacion = result.rows[0].pregunta_investigacion;
           Investigacion.calidad = result.rows[0].calidad;
@@ -580,36 +591,137 @@ RouterPrincipal.post("/descarga_informe", (req, res) => {
           Investigacion.Entorno_Investigacion= result.rows[0].entorno_investigacion;
           Investigacion.Contexto_Investigacion= result.rows[0].contexto_investigacion;
           Investigacion.preguntas_investigacion = [];
-          client.query('SELECT Esquema_Formulado.descripcion as preguntas_investigacion FROM Esquema_Formulado JOIN Investigacion ON Investigacion.id_investigacion = Esquema_Formulado.id_investigacion WHERE Investigacion.id_proyecto = $1', 
+          client.query('SELECT Esquema_Formulado.interrogante as preguntas_investigacion FROM Esquema_Formulado JOIN Investigacion ON Investigacion.id_investigacion = Esquema_Formulado.id_investigacion WHERE Investigacion.id_proyecto = $1', 
             values, (err,result) => {
             if(err){
               console.log('[-]Error --- generando query para informe -causas_sintomas');
             }
             else{
+              console.log('[+]Recoleccion de preguntas de investigacion');
               for(let i=0; i< result.rows.length; i++){
                 Investigacion.preguntas_investigacion.push(result.rows[i].preguntas_investigacion);
               }
             }
           });
           Investigacion.estadios_aplicados=[];
-          client.query('SELECT Estadio.*, Estadio_Aplicado.id_estadio_aplicado JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio = Estadio.id_Estadio JOIN Investigacion ON Investigacion.id_investigacion = Estadio_Aplicado.id_investigacion WHERE Investigacion.id_proyecto = $1', 
+          client.query('SELECT Estadio.*, Estadio_Aplicado.id_estadio_aplicado FROM Estadio JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio = Estadio.id_Estadio JOIN Investigacion ON Investigacion.id_investigacion = Estadio_Aplicado.id_investigacion WHERE Investigacion.id_proyecto = $1', 
             values, (err,result) => {
             if(err){
               console.log('[-]Error --- generando query para informe -causas_sintomas');
             }
             else{
+              console.log('[+]Recoleccion de estadios aplicados');
               for(let i=0; i< result.rows.length; i++){
                 estadio_aplicado={};
                 estadio_aplicado.estadio=result.rows[i].nombre;
                 estadio_aplicado.objetivos_especificos=[];
-                client.query('SELECT  WHERE Investigacion.id_proyecto = $1', 
+                client.query('SELECT Objetivo_Especifico_Det.contenido FROM Objetivo_Especifico_Det WHERE Objetivo_Especifico_Det.id_estadio_aplicado = $1', 
                   [result.rows[i].id_estadio_aplicado], (err,result) => {
                   if(err){
                     console.log('[-]Error --- generando query para informe -causas_sintomas');
                   }
                   else{
+                    console.log('[+]Recoleccion de objetivos especificos');
                     for(let i=0; i< result.rows.length; i++){
-                      
+                      let objetivo_especifico= result.rows[i].contenido;
+                      estadio_aplicado.objetivos_especificos.push(objetivo_especifico);
+                    }
+                  }
+                });
+                estadio_aplicado.eventos_delimitados=[];
+                client.query('SELECT Evento_Delimitado.id_evento_delimitado, Clase_Evento.nombre as clase_Evento, Tipo_Evento.nombre as tipo_Evento, Evento_Delimitado.descripcion as evento_delimitado FROM Evento_Delimitado JOIN Clase_Evento ON Clase_Evento.id_clase_evento = Evento_Delimitado.id_clase_evento JOIN Tipo_Evento ON Tipo_Evento.id_tipo_evento = Evento_Delimitado.id_tipo_evento WHERE Evento_Delimitado.id_estadio_aplicado = $1', 
+                  [result.rows[i].id_estadio_aplicado], (err,result) => {
+                  if(err){
+                    console.log('[-]Error --- generando query para informe -causas_sintomas');
+                  }
+                  else{
+                    console.log('[+]Recoleccion de eventos delimitados');
+                    for(let i=0; i< result.rows.length; i++){
+                      Evento_Delimitado ={};
+                      Evento_Delimitado.tipo_evento = result.rows[i].tipo_evento;
+                      Evento_Delimitado.clase_Evento = result.rows[i].clase_evento;
+                      Evento_Delimitado.descripcion = result.rows[i].evento_delimitado;
+                      Evento_Delimitado.sinergias = [];
+                      client.query('SELECT Sinergia.id_sinergia, Sinergia.nombre FROM Sinergia WHERE Sinergia.id_evento_delimitado = $1', 
+                        [result.rows[i].id_evento_delimitado], (err,result) => {
+                        if(err){
+                          console.log('[-]Error --- generando query para informe -causas_sintomas');
+                        }
+                        else{
+                          console.log('[+]Recoleccion de sinergias');
+                          for(let i=0; i< result.rows.length; i++){
+                            sinergia={};
+                            sinergia.nombre= result.rows[i].nombre;
+                            sinergia.fuentes=[];
+                            client.query('SELECT Fuente.valor FROM Fuente WHERE Fuente.id_sinergia = $1', 
+                              [result.rows[i].id_sinergia], (err,result) => {
+                                if(err){
+                                  console.log('[-]Error --- generando query para informe -causas_sintomas');
+                                }
+                                else{
+                                  console.log('[+]Recoleccion de fuentes');
+                                  for(let i=0; i< result.rows.length; i++){
+                                    let fuente= result.rows[i].valor;
+                                    sinergia.fuentes.push(fuente);
+                                  }
+                                }
+                            });
+                            sinergia.aplicaciones_instrumentales=[];
+                            client.query('SELECT Aplicacion_Instrumental.id_sinergia, Aplicacion_Instrumental.id_instrumento, Instrumento.nombre, Aplicacion_Instrumental.identificacion FROM Aplicacion_Instrumental JOIN Instrumento ON Aplicacion_Instrumental.id_instrumento = Instrumento.id_instrumento WHERE Aplicacion_Instrumental.id_sinergia = $1', 
+                              [result.rows[i].id_sinergia], (err,result) => {
+                                if(err){
+                                  console.log('[-]Error --- generando query para informe -causas_sintomas');
+                                }
+                                else{
+                                  console.log('[+]Recoleccion de aplicaciones instrumentales');
+                                  for(let i=0; i< result.rows.length; i++){
+                                    aplicacion_instrumental={};
+                                    aplicacion_instrumental.instrumento= result.rows[i].nombre;
+                                    aplicacion_instrumental.identificacion = result.rows[i].identificacion;
+                                    aplicacion_instrumental.items= [];
+                                    client.query('SELECT Indicio.contenido as indicio, Item.*, Tipo_Item.nombre as tipo_item FROM Item JOIN Instrumento_Item ON Instrumento_Item.id_item = Item.id_item JOIN Indicio_Item ON Indicio_Item.id_item = Item.id_item JOIN Indicio ON Indicio.id_indicio = Indicio_Item.id_indicio JOIN Tipo_Item ON Tipo_Item.id_tipo_item = Item.id_tipo_item  WHERE Instrumento_Item.id_sinergia  = $1 AND Instrumento_Item.id_instrumento = $2', 
+                                      [result.rows[i].id_sinergia, result.rows[i].id_instrumento], (err,result) => {
+                                      if(err){
+                                        console.log('[-]Error --- generando query para informe -causas_sintomas');
+                                      }
+                                      else{
+                                        console.log('[+]Recoleccion de items');
+                                        for(let i=0; i< result.rows.length; i++){
+                                          item ={};
+                                          item.contenido= result.rows[i].contenido;
+                                          item.identificacion= result.rows[i].identificacion;
+                                          item.tipo_item= result.rows[i].tipo_item;
+                                          item.indicio= result.rows[i].indicio;
+                                          client.query('SELECT Categoria.*, Escala.nombre as escala FROM Categoria JOIN Escala ON Escala.id_Escala = Categoria.id_escala JOIN Item ON Item.id_categoria = Categoria.id_Categoria WHERE Item.id_item = $1', 
+                                            [result.rows[i].id_item], (err,result) => {
+                                              if(err){
+                                                console.log('[-]Error --- generando query para informe -causas_sintomas');
+                                              }
+                                              else{
+                                                console.log('[+]Recoleccion de categorias');
+                                                categoria={};
+                                                categoria.nombre = result.rows[0].nombre;
+                                                categoria.descripcion = result.rows[0].descripcion;
+                                                categoria.aplicacion_temporal = result.rows[0].aplicacion_temporal;
+                                                categoria.terminos = result.rows[0].terminos;
+                                                categoria.nivel_ausencia = result.rows[0].nivel_ausencia;
+                                                categoria.escala = result.rows[0].escala;
+                                                item.categoria = categoria;
+                                              }
+                                          });
+                                          aplicacion_instrumental.items.push(item);
+                                        }
+                                      }
+                                    });
+                                    sinergia.aplicaciones_instrumentales.push(aplicacion_instrumental);
+                                  }
+                                }
+                            });
+                            Evento_Delimitado.sinergias.push(sinergia);
+                          }
+                        }
+                      });
+                      estadio_aplicado.eventos_delimitados.push(Evento_Delimitado);
                     }
                   }
                 });
@@ -621,6 +733,11 @@ RouterPrincipal.post("/descarga_informe", (req, res) => {
         }
       });
     }
+    console.log('[+]Finalizacion de Recoleccion de informacion');
+    client.end((err) => {console.log('[+]disconnected - Recoleccion de info')});
+    res.send({
+      proyecto: proyecto
+    });
   });
 });
 
