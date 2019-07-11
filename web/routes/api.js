@@ -1,4 +1,4 @@
-var DAO = require('../scripts/DAO.js').default;
+var DAO = require('../scripts/DAO/DAO.js').default;
 
 const {fetch} = require('node-fetch');
 //Ruta principal de acceso a la pagina.
@@ -60,30 +60,9 @@ RouterPrincipal.get("/user_info", async (req, res) => {
 
 RouterPrincipal.get("/user_actions", (req, res) => {
   console.log('[+]Entrada a user_Actions');
-  const client= new Client(datos);
-  var actions=[];
+  const conexion= new DAO();
   values = [req.session.id_tipo_usuario];
-  client.connect().catch((err) => {
-    console.log('[-]Error en client connect. /api/user_actions \n');
-    console.log(err);
-  });
-  //Validacion de ingreso.
-  client.query(query_actions,values, (err,result) => {
-    if (err){
-      console.log('[-]Error en client query. /api/user_actions \n');
-      console.log(err);
-    }
-    else{
-      if ( result.rows.length >0 )
-        for(let i = 0; i< result.rows.length; i++){
-          actions.push({
-            nombre: result.rows[i].nombre,
-            ruta: result.rows[i].ruta,
-            descripcion: result.rows[i].descripcion
-          })
-        }
-    }
-    client.end((err) => console.log('[+]disconnected - User Actions'));
+  conexion.acciones_usuario(values).then((actions) => {
     res.send({
       actions: actions,
       loaded:true
@@ -93,32 +72,9 @@ RouterPrincipal.get("/user_actions", (req, res) => {
 
 RouterPrincipal.get("/user_investigations", (req, res) => {
   console.log('[+]Entrada a user_investigations');
-  const client= new Client(datos);
-  var investigations=[];
+  const conexion= new DAO(datos);
   values = [req.session.id_usuario];
-  client.connect().catch((err) => {
-    console.log('[-]Error en client connect. /api/user_investigations \n');
-    console.log(err);
-  });
-  //Validacion de ingreso.
-  client.query(query_investigations,values, (err,result) => {
-    if (err){
-      console.log('[-]Error en client query. /api/user_investigations \n');
-      console.log(err);
-    }
-    else{
-      if ( result.rows.length > 0 )
-        for(let i = 0; i< result.rows.length; i++){
-          investigations.push({
-            identificacion: result.rows[i].identificacion,
-            id_proyecto: result.rows[i].id_proyecto,
-            pregunta_investigacion: result.rows[i].pregunta_investigacion,
-            calidad: result.rows[i].calidad,
-            objetivo_general: result.rows[i].objetivo_general
-          })
-        }
-    }
-    client.end((err) => console.log('[+]disconnected - User Investigations'));
+  conexion.investigaciones_usuario(values).then( (investigations) => {
     res.send({
       investigations: investigations,
       loaded:true
@@ -128,38 +84,9 @@ RouterPrincipal.get("/user_investigations", (req, res) => {
 
 RouterPrincipal.post("/user_investigation", (req, res) => {
   console.log('[+]Entrada a user_investigation')
-  const client= new Client(datos);
-  var investigation={};
+  const conexion= new DAO(datos);
   values = [req.body.id];
-  client.connect().catch((err) => {
-    console.log('[-]Error en client connect. /api/user_investigation \n');
-    console.log(err);
-  });
-  //Validacion de ingreso.
-  client.query(query_investigation,values, (err,result) => {
-    if (err){
-      console.log('[-]Error en client query. /api/user_investigation \n');
-      console.log(err);
-    }
-    else{
-      if ( result.rows.length > 0 ){
-        investigation={
-          identificacion: result.rows[0].identificacion,
-          cantidad_uf: result.rows[0].cantidad_uf,
-          objetivo_general: result.rows[0].objetivo_general,
-          contexto:{
-            poblacion: result.rows[0].poblacion,
-            concepcion: result.rows[0].concepcion,
-            temporalidad: result.rows[0].temp
-          },
-          mod: result.rows[0].mod,
-          tipo_inv:result.rows[0].tipo_inv,
-          calidad: result.rows[0].calidad,
-          cantidad_uf: result.rows[0].cantidad_uf
-        }
-      }
-    }
-    client.end((err) => console.log('[+]disconnected - User Investigation'));
+  conexion.investigacion_usuario(values).then((investigation) => {
     res.send({
       investigation: investigation,
       loaded:true
@@ -169,74 +96,18 @@ RouterPrincipal.post("/user_investigation", (req, res) => {
 
 RouterPrincipal.post("/user_investigation_restricciones_alcances", (req, res) => {
   console.log('[+]Entrada a restricciones con alcances');
-  const client= new Client(datos);
-  var alcances=[];
-  var restricciones=[];
+  const conexion= new DAO();
   values = [req.body.id];
-  client.connect().catch((err) => {
-    console.log('[-]Error en client connect. /api/user_investigation_restricciones_alcances \n');
-    console.log(err);
-  });
-  //Validacion de ingreso.
-  client.query(query_restricciones,values, (err,result) => {
-    if (err){
-      console.log('[-]Error en client query. /api/user_investigation_restricciones_alcances \n');
-      console.log(err);
-    }
-    else{
-      if ( result.rows.length > 0 ){
-        for(let i=0; i< result.rows.length;i++){
-          restricciones.push(result.rows[i].contenido);
-        }
-      }
-    }
-  });
-  client.query(query_alcances,values, (err,result) => {
-    if (err){
-      console.log('[-]Error en client query. /api/user_investigation_restricciones_alcances \n');
-      console.log(err);
-    }
-    else{
-      if ( result.rows.length > 0 ){
-        for(let i=0; i< result.rows.length;i++){
-          alcances.push(result.rows[i].contenido);
-        }
-      }
-    }
-    client.end((err) => {console.log('[+]disconnected - restricciones alcances')});
-    res.send({
-      alcances: alcances,
-      restricciones: restricciones
-    });
+  conexion.investigacion_restricciones_alcances(values).then((info) =>{
+    res.send(info);
   });
 });
 
 RouterPrincipal.post("/unidades_info", (req, res) => {
   console.log('[+]Entrada a unidades_info')
-  const client= new Client(datos);
-  var unidades=[];
+  const conexion= new DAO();
   values = [req.body.id];
-  client.connect().catch((err) => {
-    console.log('[-]Error en client connect. /api/user_investigation_restricciones_alcances \n');
-    console.log(err);
-  });
-  //Validacion de ingreso.
-  client.query(query_unidades,values, (err,result) => {
-    if (err){
-      console.log('[-]Error en client query. /api/user_investigation_restricciones_alcances \n');
-      console.log(err);
-    }
-    else{
-        for (let i= 0; i < result.rows.length; i++){
-          unidad ={}
-          unidad.autor= result.rows[i].autor;
-          unidad.fecha= result.rows[i].fecha;
-          unidad.titulo= result.rows[i].titulo;
-          unidad.id_unidad_informacion = result.rows[i].id_unidad_informacion;
-          unidades.push(unidad);
-        }
-    }
-    client.end((err) => {console.log('[+]disconnected - unidades info')});
+  conexion.investigacion_unidades_info(values).then((unidades) => {
     res.send({
       unidades:unidades
     });
@@ -245,30 +116,9 @@ RouterPrincipal.post("/unidades_info", (req, res) => {
 
 RouterPrincipal.post("/unidades_citas", (req, res) => {
   console.log('[+]Entrada en citas');
-  const client= new Client(datos);
-  var citas=[];
+  const conexion= new DAO();
   values = [req.body.id];
-  client.connect().catch((err) => {
-    console.log('[-]Error en client connect. \n');
-    console.log(err);
-  });
-  //Validacion de ingreso.
-  client.query(query_citas, values, (err,result) => {
-    if (err){
-      console.log('[-]Error en client query.  \n');
-      console.log(err);
-    }
-    else{
-        for (let i= 0; i < result.rows.length; i++){
-          cita ={};
-          cita.cita= result.rows[i].cita;
-          cita.categoria = result.rows[i].categoria;
-          cita.entidad = result.rows[i].entidad;
-          cita.delimitacion = result.rows[i].delimitacion;
-          citas.push(cita);
-        }
-    }
-    client.end((err) => {console.log('[+]disconnected - citas')});
+  conexion.unidades_citas(values).then((citas) => {
     res.send({
       citas: citas
     });

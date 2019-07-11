@@ -131,7 +131,6 @@ class Investigation extends Component {
                 if(investigation.calidad > 20){
                     calidadBadge= (<span className="badge badge-success mx-auto badge-calidad my-1 mx-auto text-center">{investigation.calidad}</span>);
                 }
-            console.log(investigation);
             content= (<div className="container card bg-dark text-light content-extended">
                 <h2 className="card-header row col-12 bg-primary text-light title-proy">{investigation.identificacion}</h2>
                 <div className="card-body">
@@ -237,8 +236,8 @@ class Investigation extends Component {
                             <div className="card bg-primary text-light mx-auto">
                                 <h5 class="card-title text-center text-dark">Generar Informe</h5>
                                 <div className="card-footer d-flex justify-content-center">
-                                    <input id="fileselector" type="file" onChange={this.descargarInforme} webkitdirectory directory multiple="false" style="display:none" />
-                                    <button type="button" className="btn btn-light text-dark button-select" onClick={document.getElementsById('fileselector').click()}>
+                                    <input id="fileselector" className="d-none"  type="file" onChange={this.descargarInforme} webkitdirectory directory multiple="false"/>
+                                    <button type="button" className="btn btn-light text-dark button-select" onClick={() => document.getElementById('fileselector').click()}>
                                         Descargar
                                     </button>
                                 </div>

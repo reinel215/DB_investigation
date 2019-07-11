@@ -149,5 +149,180 @@ module.exports.default = class DAO {
       });
     }
 
-    
+    acciones_usuario(values){
+      return new Promise ( (resolve, reject) => {
+        let actions=[];
+        this.client.connect().catch((err) => {
+          console.log('[-]Error en client connect. /api/user_actions \n');
+          console.log(err);
+        });
+        //Validacion de ingreso.
+        this.client.query(query_actions,values, (err,result) => {
+          if (err){
+            console.log('[-]Error en client query. /api/user_actions \n');
+            console.log(err);
+          }
+          else{
+            if ( result.rows.length >0 )
+              for(let i = 0; i< result.rows.length; i++){
+                actions.push({
+                  nombre: result.rows[i].nombre,
+                  ruta: result.rows[i].ruta,
+                  descripcion: result.rows[i].descripcion
+                })
+              }
+          }
+          this.client.end((err) => console.log('[+]disconnected - User Actions'));
+          resolve(actions);
+        });
+      });
+    }
+
+    investigaciones_usuario(values){
+      return new Promise ( (resolve, reject) => {
+        let investigations=[];
+        this.client.connect().catch((err) => {
+          console.log('[-]Error en client connect. /api/user_investigations \n');
+          console.log(err);
+          resolve(investigations);
+        });
+        //Validacion de ingreso.
+        this.client.query(query_investigations,values, (err,result) => {
+          if (err){
+            console.log('[-]Error en client query. /api/user_investigations \n');
+            console.log(err);
+          }
+          else{
+            if ( result.rows.length > 0 )
+              for(let i = 0; i< result.rows.length; i++){
+                investigations.push({
+                  identificacion: result.rows[i].identificacion,
+                  id_proyecto: result.rows[i].id_proyecto,
+                  pregunta_investigacion: result.rows[i].pregunta_investigacion,
+                  calidad: result.rows[i].calidad,
+                  objetivo_general: result.rows[i].objetivo_general
+                })
+              }
+          }
+          this.client.end((err) => console.log('[+]disconnected - User Investigations'));
+          resolve(investigations);
+        });
+      });
+    }
+
+    investigacion_usuario(values){
+      return new Promise ((resolve, reject) => {
+        let investigation={}    
+        this.client.connect().catch((err) => {
+          console.log('[-]Error en client connect. /api/user_investigation \n');
+          console.log(err);
+          resolve(investigation);
+        });
+        //Validacion de ingreso.
+        this.client.query(query_investigation,values, (err,result) => {
+          if (err){
+            console.log('[-]Error en client query. /api/user_investigation \n');
+            console.log(err);
+          }
+          else{
+            if ( result.rows.length > 0 ){
+              investigation={
+              identificacion: result.rows[0].identificacion,
+              cantidad_uf: result.rows[0].cantidad_uf,
+              objetivo_general: result.rows[0].objetivo_general,
+              contexto:{
+                poblacion: result.rows[0].poblacion,
+                concepcion: result.rows[0].concepcion,
+                temporalidad: result.rows[0].temp
+              },
+              mod: result.rows[0].mod,
+              tipo_inv:result.rows[0].tipo_inv,
+              calidad: result.rows[0].calidad,
+              cantidad_uf: result.rows[0].cantidad_uf
+              }
+            }
+          }
+          this.client.end((err) => console.log('[+]disconnected - User Investigation'));
+          resolve(investigation);
+        });
+    });
+    }
+
+    investigacion_restricciones_alcances(values){
+      return new Promise((resolve, reject) =>{
+        let restricciones=[];
+        let alcances=[];
+        this.client.connect().catch((err) => {
+          console.log('[-]Error en client connect. /api/user_investigation_restricciones_alcances \n');
+          console.log(err);
+          resolve()
+        });
+        //Validacion de ingreso.
+        this.client.query(query_restricciones,values, (err,result) => {
+          if (err){
+            console.log('[-]Error en client query. /api/user_investigation_restricciones_alcances \n');
+            console.log(err);
+          }
+          else{
+            if ( result.rows.length > 0 ){
+              for(let i=0; i< result.rows.length;i++){
+                restricciones.push(result.rows[i].contenido);
+              }
+            }
+          }
+        });
+        this.client.query(query_alcances,values, (err,result) => {
+          if (err){
+            console.log('[-]Error en client query. /api/user_investigation_restricciones_alcances \n');
+            console.log(err);
+          }
+          else{
+            if ( result.rows.length > 0 ){
+              for(let i=0; i< result.rows.length;i++){
+                alcances.push(result.rows[i].contenido);
+              }
+            }
+          }
+          this.client.end((err) => {console.log('[+]disconnected - restricciones alcances')});
+          resolve({
+            restricciones: restricciones,
+            alcances: alcances
+          })
+        });
+      });
+    }
+
+    investigacion_unidades_info(values){
+      return new Promise((resolve, reject) => {
+        let unidades=[];
+      this.client.connect().catch((err) => {
+        console.log('[-]Error en client connect. /api/user_investigation_restricciones_alcances \n');
+        console.log(err);
+        resolve(unidades);
+      });
+      //Validacion de ingreso.
+      this.client.query(query_unidades,values, (err,result) => {
+        if (err){
+          console.log('[-]Error en client query. /api/user_investigation_restricciones_alcances \n');
+          console.log(err);
+        }
+        else{
+          for (let i= 0; i < result.rows.length; i++){
+            unidad ={}
+            unidad.autor= result.rows[i].autor;
+            unidad.fecha= result.rows[i].fecha;
+            unidad.titulo= result.rows[i].titulo;
+            unidad.id_unidad_informacion = result.rows[i].id_unidad_informacion;
+            unidades.push(unidad);
+          }
+        }
+        this.client.end((err) => {console.log('[+]disconnected - unidades info')});
+        resolve(unidades);
+      });
+      });
+    }
+
+    unidades_citas(){
+      
+    }
 }

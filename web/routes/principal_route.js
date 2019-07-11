@@ -1,4 +1,4 @@
-var DAO = require('../scripts/DAO.js').default;
+var DAO = require('../scripts/DAO/DAO.js').default;
 //Ruta principal de acceso a la pagina.
 const express = require('express');
 const path = require('path');
