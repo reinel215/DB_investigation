@@ -40,8 +40,8 @@ class Investigation extends Component {
                 else
                     return null;
             }).then(json => {
-                const proyecto = json.proyecto;
-                     
+                //const documento= new Office(json.proyecto, fileselector.value);
+                //documento.generar_informe();    
         });
     }
 

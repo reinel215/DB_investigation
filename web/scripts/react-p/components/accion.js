@@ -47,7 +47,7 @@ class Accion extends Component {
                 <div className="mr-auto">
                     {
                         this.state.actions.map((action,i)=>{
-                            return (<div className="card mr-auto">
+                            return (<div className="card mr-auto mb-2">
                                 <h5 className="card-header"></h5>
                                 <div className="card-body">
                                     <h3 className="card-title">{action.nombre}</h3>

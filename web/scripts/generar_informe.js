@@ -1,10 +1,10 @@
 const officegen = require('officegen')
-const fs = require('fs')
 
 module.exports.default = class Generador_Documento {
 
-    constructor(proyecto) {
+    constructor(proyecto,direccion) {
         this.proyecto = proyecto;
+        this.direccion=direccion;
     }
 
     generar_informe(){
