@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 //Router para renderizar los componentes segun direccion de los mismos.
 import {Link} from 'react-router-dom';
+const Office = require('../../generar_informe.js');
 
 var linkUF;
 var linkINV;
@@ -40,8 +41,8 @@ class Investigation extends Component {
                 else
                     return null;
             }).then(json => {
-                //const documento= new Office(json.proyecto, fileselector.value);
-                //documento.generar_informe();    
+                const documento= new Office(json.proyecto, fileselector.value);
+                documento.generar_informe();    
         });
     }
 

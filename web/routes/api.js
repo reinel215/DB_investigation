@@ -45,7 +45,7 @@ RouterPrincipal.get("/user_actions", (req, res) => {
 
 RouterPrincipal.get("/user_investigations", (req, res) => {
   console.log('[+]Entrada a user_investigations');
-  const conexion= new DAO(datos);
+  const conexion= new DAO();
   values = [req.session.id_usuario];
   conexion.investigaciones_usuario(values).then( (investigations) => {
     res.send({
@@ -57,7 +57,7 @@ RouterPrincipal.get("/user_investigations", (req, res) => {
 
 RouterPrincipal.post("/user_investigation", (req, res) => {
   console.log('[+]Entrada a user_investigation')
-  const conexion= new DAO(datos);
+  const conexion= new DAO();
   values = [req.body.id];
   conexion.investigacion_usuario(values).then((investigation) => {
     res.send({
@@ -100,7 +100,7 @@ RouterPrincipal.post("/unidades_citas", (req, res) => {
 
 RouterPrincipal.post("/investigation_estadios", (req, res) => {
   console.log('[+]Entrada en estadios de cierta investigacion');
-  const conexion= new DAO(datos);
+  const conexion= new DAO();
   values = [req.body.id];
   conexion.investigacion_estadios(values).then((estadios) => {
     res.send({
