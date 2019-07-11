@@ -1,3 +1,4 @@
+var DAO = require('../scripts/DAO.js').default;
 //Ruta principal de acceso a la pagina.
 const express = require('express');
 const path = require('path');
@@ -13,11 +14,6 @@ const datos= {
   port: 5432,
 };
 
-const query_user= 'SELECT A.id_usuario, A.nombres, A.apellidos, A.correo, A.hash_password, A.intentos, A.id_tipo_usuario FROM Usuario as A WHERE A.correo = $1::text';
-const reducir_intento= 'UPDATE Usuario SET intentos = $1 WHERE Usuario.id = $2';
-const reset_intento= 'UPDATE Usuario SET intentos = 3 WHERE Usuario.id = $1';
-const query_register= 'INSERT INTO Usuario (nombres, apellidos, correo, hash_password, intentos, id_tipo_usuario) VALUES ($1, $2, $3, $4, 3, 1)';
-
 RouterPrincipal.all("/", (req, res) =>{
   res.redirect('/login');
 });
@@ -31,55 +27,11 @@ RouterPrincipal.get("/login", (req, res) =>{
 //Validacion de ingreso.
 RouterPrincipal.post("/signin", (req, res) => {
   var values = [req.body.email];
-  //validacion de ingreso en esta seccion.
-  const client= new Client(datos);
-  client.connect().catch((err) => {
-    console.log('Error en client connect. /signin: \n');
-    console.log(err);
-    req.session.api_response =true;
-    req.session.response = err;
-    req.session.save();
-  });
-  //Validacion de ingreso.
-  client.query(query_user,values, (err,result) => {
-    if (err){
-      console.log('Error en client query. /signin: \n');
-      console.log(err);
-      req.session.response= 'Error de conexion, usuario no encontrado.'
-      req.session.api_response = true;
-      req.session.save();
-    }
-    else{
-      //Comprobacion de existencia de usuario y de intentos valido.
-      if(result.rows[0] && result.rows[0].intentos > 0){
-        //comprobacion de uso de password correcto. Caso incorrecto
-        if (result.rows[0].hash_password != md5(req.body.password)){
-          req.session.api_response = true
-          req.session.response = 'Clave invalida';
-          values =[result.rows[0].intentos--, result.rows[0].id_usuario];
-          client.query(reducir_intento, values).then( result => console.log(result)).catch(e => console.log(e));
-        }
-        //Caso Correcto.
-        else{
-          values =[result.rows[0].id_usuario];
-          client.query(reset_intento, values).then( result => console.log(result)).catch(e => console.log(e));;
-          req.session.id_usuario = result.rows[0].id_usuario;
-          req.session.hash_password = result.rows[0].hash_password;
-          req.session.email = result.rows[0].correo;
-          req.session.nombres = result.rows[0].nombres;
-          req.session.apellidos = result.rows[0].apellidos;
-          req.session.id_tipo_usuario = result.rows[0].id_tipo_usuario;
-        }
-      }
-      //Usuario inexistente, invalido.
-      else{
-        req.session.api_response = true;
-        req.session.response= 'Usuario invalido.';
-      }
-    }
+  let conexion = new DAO();
+  conexion.ingreso_usuario(values, req.session, req.body.password).then((session) => {
     //Finalizacion de la respuesta con desconexion y redireccion.
+    req.session = session;
     req.session.save();
-    client.end((err) => console.log('disconnected'));
     console.log('redireccion');
     res.redirect('/');
   });
@@ -89,28 +41,10 @@ RouterPrincipal.post("/signin", (req, res) => {
 RouterPrincipal.post("/signup", function(req,res){
   const values = [req.body.nombres, req.body.apellidos, req.body.registro_email, md5(req.body.registro_password)];
   //validacion de ingreso en esta seccion.
-  const client= new Client(datos);
-  client.connect().catch((err) => {
-    console.log('Error en client connect. /signup \n');
-    console.log(err);
-    req.session.api_response = true;
-    req.session.response = 'Error al intentar conectar.'
+  const conexion= new DAO();
+  conexion.registro_usuario(values,req.session).then((session) => {
+    req.session = session;
     req.session.save();
-  });
-  //Validacion de ingreso.
-  client.query(query_register,values, (err,result) => {
-    if (err){
-      console.log('Error en client query. /signup \n');
-      console.log(err);
-      req.session.api_response = true;
-      req.session.response= 'Error de conexion, usuario no registrado.'
-    }
-    else{
-      req.session.api_response = true;
-      req.session.response= 'Registro completado.';
-    }
-    req.session.save();
-    client.end((err) => console.log('disconnected'));
     res.redirect("/");
   });
 });

@@ -7,6 +7,20 @@ const datos= {
   port: 5432,
 };
 
+//encriptador MD5
+const md5 = require('md5');
+
+
+//QUERYS IN USE.
+//Login User
+const query_user= 'SELECT A.id_usuario, A.nombres, A.apellidos, A.correo, A.hash_password, A.intentos, A.id_tipo_usuario FROM Usuario as A WHERE A.correo = $1::text';
+const reducir_intento= 'UPDATE Usuario SET intentos = $1 WHERE Usuario.id = $2';
+const reset_intento= 'UPDATE Usuario SET intentos = 3 WHERE Usuario.id = $1';
+
+//Register User
+const query_register= 'INSERT INTO Usuario (nombres, apellidos, correo, hash_password, intentos, id_tipo_usuario) VALUES ($1, $2, $3, $4, 3, 1)';
+
+//Obtencion de informacion para los proyectos.
 const query_cont_proy= 'SELECT COUNT(*) FROM Proyecto as A JOIN Usuario_Proyecto B ON B.id_proyecto = A.id_proyecto WHERE B.id_usuario = $1';
 const query_actions= 'SELECT Permiso.* FROM Permiso JOIN Rol ON Rol.id_permiso = Permiso.id_permiso JOIN Tipo_Usuario ON Tipo_Usuario.id_tipo_usuario = rol.id_tipo_usuario WHERE Tipo_Usuario.id_tipo_usuario = $1';
 const query_investigations= 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto WHERE Usuario_Proyecto.id_usuario = $1';
@@ -23,6 +37,7 @@ const query_sinergia_indicios= 'SELECT Aplicacion_Instrumental.identificacion, I
 //Calculo de calidad
 const query_calculo_rondas='';
 const query_calculo_porcentajes='';
+//------------------------------------
 
 module.exports.default = class DAO {
 
@@ -53,4 +68,86 @@ module.exports.default = class DAO {
             });
         });
     }
+
+    ingreso_usuario(values, session, password){
+        //validacion de ingreso en esta seccion.
+        return new Promise((resolve, reject) => {
+        this.client.connect().catch((err) => {
+          console.log('Error en client connect. /signin: \n');
+          console.log(err);
+          session.api_response =true;
+          session.response = err;
+          resolve(session);
+        });
+        //Validacion de ingreso.
+        this.client.query(query_user,values, (err,result) => {
+          if (err){
+            console.log('Error en client query. /signin: \n');
+            console.log(err);
+            session.response= 'Error de conexion, usuario no encontrado.'
+            session.api_response = true;
+          }
+          else{
+            //Comprobacion de existencia de usuario y de intentos valido.
+            if(result.rows[0] && result.rows[0].intentos > 0){
+              //comprobacion de uso de password correcto. Caso incorrecto
+              if (result.rows[0].hash_password != md5(password)){
+                session.api_response = true
+                session.response = 'Clave invalida';
+                values =[result.rows[0].intentos--, result.rows[0].id_usuario];
+                this.client.query(reducir_intento, values).then( result => console.log(result)).catch(e => console.log(e));
+              }
+              //Caso Correcto.
+              else{
+                values =[result.rows[0].id_usuario];
+                this.client.query(reset_intento, values).then( result => console.log(result)).catch(e => console.log(e));;
+                session.id_usuario = result.rows[0].id_usuario;
+                session.hash_password = result.rows[0].hash_password;
+                session.email = result.rows[0].correo;
+                session.nombres = result.rows[0].nombres;
+                session.apellidos = result.rows[0].apellidos;
+                session.id_tipo_usuario = result.rows[0].id_tipo_usuario;
+              }
+            }
+            //Usuario inexistente, invalido.
+            else{
+              session.api_response = true;
+              session.response= 'Usuario invalido.';
+            }
+          }
+          this.client.end((err)=> console.log('[-]Error en ingreso al finalizar conexion'));
+          resolve(session);
+        });
+      });
+    }
+
+    registro_usuario(values, session){
+      return new Promise ( (resolve, reject) => {
+      this.client.connect().catch((err) => {
+        console.log('Error en client connect. /signup \n');
+        console.log(err);
+        session.api_response = true;
+        session.response = 'Error al intentar conectar.';
+        resolve(session);
+      });
+      //Validacion de ingreso.
+      this.client.query(query_register,values, (err,result) => {
+        if (err){
+          console.log('Error en client query. /signup \n');
+          console.log(err);
+          session.api_response = true;
+          session.response= 'Error de conexion, usuario no registrado.';
+          if (err.code == 23505)
+            session.response= 'Correo de usuario ya registrado';
+        }
+        else{
+          session.api_response = true;
+          session.response= 'Registro completado.';
+        }
+        resolve(session);
+      });
+      });
+    }
+
+    
 }
