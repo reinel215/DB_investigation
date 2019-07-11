@@ -1,7 +1,7 @@
 const officegen = require('officegen')
 const fs = require('fs')
 
-class Hero {
+module.exports.default = class Generador_Documento {
 
     constructor(proyecto) {
         this.proyecto = proyecto;
@@ -21,3 +21,4 @@ class Hero {
     }
 
 }
+

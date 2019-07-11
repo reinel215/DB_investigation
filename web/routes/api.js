@@ -1,3 +1,5 @@
+var DAO = require('../scripts/DAO.js').default;
+
 const {fetch} = require('node-fetch');
 //Ruta principal de acceso a la pagina.
 const express = require('express');
@@ -41,34 +43,17 @@ RouterPrincipal.get("/validate", (req, res) => {
   });
 });
 
-RouterPrincipal.get("/user_info", (req, res) => {
+RouterPrincipal.get("/user_info", async (req, res) => {
   console.log('[+]Entrada a user_info');
-  const client= new Client(datos);
-  let nombre= req.session.nombres + ' ' + req.session.apellidos;
-  let tipo_usuario = req.session.id_tipo_usuario;
-  let contador_proy;
-  values = [req.session.id_usuario];
-  client.connect().catch((err) => {
-    console.log('[-]Error en client connect. /api/user_info \n');
-    console.log(err);
-  });
-  //Validacion de ingreso.
-  client.query(query_cont_proy,values, (err,result) => {
-    if (err){
-      console.log('[-]Error en client query. /api/user_info \n');
-      console.log(err);
-      nombre='';
-      tipo_usuario=0;
-      contador_proy=0;
-    }
-    else{
-      contador_proy= result.rows[0].count
-    }
-    client.end((err) => console.log('[+]disconnected - User Info'));
-    res.send({nombre: nombre,
-      tipo_usuario: tipo_usuario,
-      contador_proy: contador_proy
-    });
+  let conexion = new DAO();
+  let info={};
+  info.nombre= req.session.nombres + ' ' + req.session.apellidos;
+  info.tipo_usuario = req.session.id_tipo_usuario;
+  conexion.contador_proyectos([req.session.id_usuario]).then( (contador_proy) => {
+    info.contador_proy = contador_proy;
+    console.log('EPALE:');
+    console.log(info);
+    res.send(info);
   });
 });
 
