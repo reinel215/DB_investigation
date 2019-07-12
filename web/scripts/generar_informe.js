@@ -1,4 +1,4 @@
-const officegen = require('officegen')
+const officegen = require('officegen');
 
 module.exports.default = class Generador_Documento {
 

@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 //Router para renderizar los componentes segun direccion de los mismos.
 import {Link} from 'react-router-dom';
-const Office = require('../../generar_informe.js');
+import ReporteCalidad from './ReporteCalidad';
+//const Office = require('../../generar_informe.js');
 
 var linkUF;
 var linkINV;
+var Reporte=(<div className="d-none"></div>);
 
 class Investigation extends Component {
 
@@ -23,11 +25,12 @@ class Investigation extends Component {
         linkINV="/home/investigation/" + this.props.match.params.id + "/INV";
         this.handleCalculoCalidad= this.handleCalculoCalidad.bind(this);
         this.descargarInforme = this.descargarInforme.bind(this);
+        this.reporteCalidad= React.createRef();
+        this.actualizarCalidad= this.actualizarCalidad.bind(this);
     }
 
     descargarInforme(event){
         var fileselector = document.getElementById('fileselector');
-        console.log(fileselector.value);
         fetch('/api/descarga_informe', {
             method: 'POST', // or 'PUT'
             body: JSON.stringify(this.state), // data can be `string` or {object}!
@@ -41,31 +44,22 @@ class Investigation extends Component {
                 else
                     return null;
             }).then(json => {
-                const documento= new Office(json.proyecto, fileselector.value);
-                documento.generar_informe();    
+                //const documento= new Office(json.proyecto, fileselector.value);
+                //documento.generar_informe();    
+        });
+    }
+
+    actualizarCalidad(calidad){
+        var investigation = this.state.investigation;
+        investigation.calidad=calidad;
+        this.setState({
+            investigation:investigation
         });
     }
 
     handleCalculoCalidad(event){
-        fetch('/api/calculo_calidad', {
-            method: 'POST', // or 'PUT'
-            body: JSON.stringify(this.state), // data can be `string` or {object}!
-            headers:{
-                'Content-Type': 'application/json'
-            }
-        }).then(
-        res => {
-            if (res.status == 200)
-                return res.json()
-            else
-                return null;
-        }).then(json => {
-                var investigation = this.state.investigation;
-                investigation.calidad= json.calidad;
-                this.setState({
-                    investigation: investigation
-                });
-        });
+        Reporte =(<ReporteCalidad id={this.state.id} ref={this.reporteCalidad} actualizarCalidad={this.actualizarCalidad}></ReporteCalidad>);
+        this.setState(this.state);
     }
 
     componentDidMount(){
@@ -160,6 +154,11 @@ class Investigation extends Component {
                     </div>
                     <div className="row d-flex justify-content-center mb-3 calidad-section">
                         <div className="col-6 pb-2">
+                            {Reporte}
+                        </div>
+                    </div>
+                    <div className="row d-flex justify-content-center mb-3 calidad-section">
+                        <div className="col-6 pb-2">
                             <div className="container d-flex justify-content-center">
                                     <button className="btn btn-info" onClick={this.handleCalculoCalidad}>Calcular calidad</button>
                             </div>
@@ -237,7 +236,7 @@ class Investigation extends Component {
                             <div className="card bg-primary text-light mx-auto">
                                 <h5 class="card-title text-center text-dark">Generar Informe</h5>
                                 <div className="card-footer d-flex justify-content-center">
-                                    <input id="fileselector" className="d-none"  type="file" onChange={this.descargarInforme} webkitdirectory directory multiple="false"/>
+                                    <input id="fileselector" className="d-none"  type="file" onChange={this.descargarInforme} webkitdirectory directory multiple/>
                                     <button type="button" className="btn btn-light text-dark button-select" onClick={() => document.getElementById('fileselector').click()}>
                                         Descargar
                                     </button>

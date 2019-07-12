@@ -143,6 +143,12 @@
   width:90%;
 }
 
+.ReporteCalidad{
+  animation-name: reporte;
+  animation-duration:2000ms;
+  height: 25%;
+}
+
 .selected{
   transition: color 300ms;
 }
@@ -153,5 +159,19 @@
   }
   100%{
     transform: scaleX(1);
+  }
+}
+
+@keyframes reporte{
+  0%{
+    opacity:0;
+    transform: scaleY(0);
+  }
+  50%{
+    opacity:0;
+    transform: scaleY(1);
+  }
+  100%{
+    opacity:1;
   }
 }

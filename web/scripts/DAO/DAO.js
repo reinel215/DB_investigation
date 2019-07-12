@@ -35,7 +35,31 @@ const query_evento_sinergias = 'SELECT Clase_Sinergia.nombre as clase_sinergia, 
 const query_sinergia_indicios = 'SELECT Aplicacion_Instrumental.identificacion, Indicio.contenido as indicio, Item.identificacion as item , Item.contenido as item_descripcion, Categoria.nombre as categoria, Categoria.aplicacion_temporal, Categoria.terminos as terminos, Categoria.descripcion as descripcion, Categoria.nivel_ausencia as nivel, Escala.nombre as escala, Fuente.valor as fuente, Muestra.valor as muestra FROM Indicio  JOIN Indicio_Item ON Indicio_Item.id_indicio = Indicio.id_indicio JOIN Item ON Item.id_item = Indicio_Item.id_item JOIN Instrumento_Item ON Instrumento_Item.id_item = Item.id_item JOIN Aplicacion_Instrumental ON Aplicacion_Instrumental.id_instrumento = Instrumento_Item.id_instrumento AND Aplicacion_Instrumental.id_sinergia = Instrumento_Item.id_sinergia JOIN Sinergia ON Sinergia.id_sinergia = Aplicacion_Instrumental.id_sinergia JOIN Fuente ON Fuente.id_sinergia = Sinergia.id_sinergia JOIN Muestra ON Muestra.id_muestra = Fuente.id_muestra JOIN Categoria ON Item.id_categoria = Categoria.id_categoria JOIN Escala ON Escala.id_escala = Categoria.id_escala WHERE Aplicacion_Instrumental.id_sinergia = $1';
 
 //Calculo de calidad
-const query_informe_calidad = '';
+const query_informe_calidad = ("SELECT 'No divaga' as item, cast((SELECT count(Cita.id_cita) FROM Cita JOIN Categoria_Uso ON Categoria_Uso.id_categoria_uso = Cita.id_categoria_uso JOIN Unidad_Informacion ON Unidad_Informacion.id_unidad_informacion = Cita.id_unidad_informacion WHERE Unidad_Informacion.id_proyecto = $1 AND Unidad_Informacion.autor = 'Autor' AND Categoria_Uso.id_categoria_uso = 2) as Float) / cast((SELECT count(Cita.id_cita) FROM Cita JOIN Categoria_Uso ON Categoria_Uso.id_categoria_uso = Cita.id_categoria_uso JOIN Unidad_Informacion ON Unidad_Informacion.id_unidad_informacion = Cita.id_unidad_informacion WHERE Unidad_Informacion.id_proyecto = $1 AND Categoria_Uso.id_categoria_uso = 2) as float) as valor " 
++ " UNION " + 
+"SELECT 'Justifica los eventos' as item, cast((SELECT count(Evento.id_evento) FROM Evento JOIN Evento_Delimitado ON Evento_Delimitado.id_evento = Evento.id_evento JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado JOIN Investigacion ON Investigacion.id_investigacion = Estadio_Aplicado.id_investigacion JOIN Direccion_Uso ON Direccion_Uso.id_entidad = Evento_Delimitado.id_evento_delimitado JOIN Cita ON Cita.id_direccion_uso = Direccion_Uso.id_direccion_uso JOIN Unidad_Informacion ON Unidad_Informacion.id_unidad_informacion = Cita.id_unidad_informacion WHERE Cita.id_categoria_uso = 2 AND Unidad_Informacion.id_proyecto = $1  GROUP BY Evento.id_evento) as float)/cast((SELECT count(Evento.id_evento) FROM Evento JOIN Evento_Delimitado ON Evento_Delimitado.id_evento = Evento.id_evento JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado WHERE Estadio_Aplicado.id_investigacion = $1) as float) as valor"
++ " UNION " +
+"SELECT 'Objetivos especificos completos' as item, cast((SELECT count(Objetivo_Especifico_det.id_objetivo_estadial) FROM Objetivo_Especifico_Det JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Objetivo_Especifico_Det.id_estadio_aplicado JOIN Estadio ON Estadio.id_estadio = Estadio_Aplicado.id_estadio JOIN Objetivo_Estadial ON Objetivo_Estadial.id_objetivo_estadial = Objetivo_Especifico_det.id_objetivo_estadial JOIN Investigacion ON Investigacion.id_investigacion = Estadio_Aplicado.id_investigacion JOIN Modalidad ON Modalidad.id_modalidad = Investigacion.modalidad JOIN Estadio_Estructural ON Estadio_Estructural.id_modalidad = Modalidad.id_modalidad JOIN Objetivo_Especifico ON Objetivo_Especifico.id_estadio_estructural = Estadio_Estructural.id_estadio_Estructural WHERE Estadio_Aplicado.posicion = Estadio_Estructural.posicion AND  Objetivo_Especifico.tipo_objetivo = Objetivo_Estadial.tipo AND Investigacion.id_investigacion = $1) as float)/cast(( SELECT count(Objetivo_Especifico.id_objetivo_especifico) FROM Objetivo_Especifico JOIN Estadio_Estructural ON Estadio_Estructural.id_Estadio_Estructural = Objetivo_Especifico.id_estadio_estructural JOIN Modalidad ON Modalidad.id_modalidad = Estadio_Estructural.id_modalidad JOIN Investigacion ON Investigacion.modalidad = Modalidad.id_modalidad WHERE Investigacion.id_investigacion = $1) as float) as valor"
++ " UNION " +
+"SELECT 'Fuentes variadas' as item, cast((SELECT count(A.id_Base_Noologica) FROM Base_Noologica as A WHERE (SELECT count(Unidad_Informacion.id_unidad_informacion) FROM Unidad_Informacion WHERE Unidad_Informacion.id_proyecto = $1 AND Unidad_Informacion.id_Base_Noologica = A.id_base_Noologica) > 0) as float)/cast((SELECT count(Base_Noologica.id_base_noologica) FROM Base_Noologica) as float) as valor"
++ " UNION " +
+"SELECT 'Conceptualiza los eventos' as item, cast((SELECT count(Evento.id_evento) FROM Evento JOIN Evento_Delimitado ON Evento_Delimitado.id_evento = Evento.id_evento JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado JOIN Investigacion ON Investigacion.id_investigacion = Estadio_Aplicado.id_investigacion JOIN Direccion_Uso ON Direccion_Uso.id_entidad = Evento_Delimitado.id_evento_delimitado JOIN Cita ON Cita.id_direccion_uso = Direccion_Uso.id_direccion_uso JOIN Unidad_Informacion ON Unidad_Informacion.id_unidad_informacion = Cita.id_unidad_informacion WHERE Cita.id_categoria_uso = 3 AND Unidad_Informacion.id_proyecto = $1) as float)/cast((SELECT count(Evento.id_evento) FROM Evento JOIN Evento_Delimitado ON Evento_Delimitado.id_evento = Evento.id_evento JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado WHERE Estadio_Aplicado.id_investigacion = $1) as float) as valor"
+//+ " UNION " +
+//"SELECT 'Eventos completos' as item, cast((SELECT count(Evento.id_evento) FROM Evento JOIN Evento_Delimitado ON Evento_Delimitado.id_evento = Evento.id_evento JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado JOIN Estadio ON Estadio.id_estadio = Estadio_Aplicado.id_estadio JOIN Investigacion ON Investigacion.id_investigacion = Estadio_Aplicado.id_investigacion JOIN Modalidad ON Modalidad.id_modalidad = Investigacion.modalidad JOIN Estadio_Estructural ON Estadio_Estructural.id_modalidad = Modalidad.id_modalidad JOIN Estructura_Evento ON Estructura_Evento.id_estadio_estructural = Estadio_Estructural.id_estadio_estructural JOIN Clase_Evento_Estructural ON Clase_Evento_Estructural.id_clase_evento_Estructural = Estructura_Evento.id_clase_evento_estructural JOIN Clase_Evento ON Evento_Delimitado.id_clase_evento = Clase_Evento.id_clase_Evento WHERE Estadio_Aplicado.posicion = Estadio_Estructural.posicion AND  Clase_Evento.nombre = Clase_Evento_Estructural.nombre AND Investigacion.id_investigacion = $1) as float)/cast((SELECT count(A.id_Estadio_Estructural) FROM Estadio_Estructural as A JOIN Modalidad ON Modalidad.id_modalidad = A.id_modalidad JOIN Investigacion ON Investigacion.modalidad = Modalidad.id_modalidad WHERE Investigacion.id_investigacion = $1 AND(SELECT count(Estructura_Evento.id_Estructura_evento) FROM Estructura_Evento WHERE A.id_estadio_estructural = Estructura_Evento.id_estadio_estructural) > 0) as float) as valor"
++ " UNION " +
+"SELECT 'Eventos tienen cuadro de operacionalizacion' as item, cast((SELECT count(A.id_evento_delimitado) FROM Evento_Delimitado as A JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = A.id_estadio_aplicado WHERE (SELECT count(sinergia.id_sinergia) FROM Sinergia  JOIN Aplicacion_Instrumental ON Aplicacion_Instrumental.id_sinergia = Sinergia.id_sinergia WHERE Sinergia.id_evento_delimitado = A.id_evento_delimitado) > 0 AND Estadio_Aplicado.id_investigacion = $1) as float)/cast((SELECT count(A.id_evento_delimitado) FROM Evento_Delimitado as A JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = A.id_Estadio_Aplicado WHERE Estadio_Aplicado.id_investigacion = $1) as float) as valor"
++ " UNION " +
+"SELECT 'Señala las fuentes' as item, cast((SELECT count(A.id_sinergia) FROM Sinergia as A JOIN Evento_Delimitado ON Evento_Delimitado.id_Evento_delimitado = A.id_evento_Delimitado JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado WHERE Estadio_Aplicado.id_investigacion = $1 AND (SELECT count(Fuente.id_fuente) FROM Fuente WHERE Fuente.id_sinergia = A.id_sinergia) > 0)as float)/cast(( SELECT count(A.id_sinergia) FROM Sinergia as A JOIN Evento_Delimitado ON Evento_Delimitado.id_Evento_delimitado = A.id_evento_Delimitado JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado WHERE Estadio_Aplicado.id_investigacion = $1) as float) as valor"
++ " UNION " +
+"SELECT 'Mide las sinergias' as item, cast((SELECT count(A.id_sinergia) FROM Sinergia as A JOIN Evento_Delimitado ON Evento_Delimitado.id_Evento_delimitado = A.id_evento_Delimitado JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado WHERE Estadio_Aplicado.id_investigacion = $1 AND( SELECT count(Aplicacion_Instrumental.id_aplicacion_instrumental) FROM Aplicacion_Instrumental WHERE Aplicacion_Instrumental.id_sinergia = A.id_sinergia) > 0)as float)/cast((SELECT count(A.id_sinergia) FROM Sinergia as A JOIN Evento_Delimitado ON Evento_Delimitado.id_Evento_delimitado = A.id_evento_Delimitado JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado WHERE Estadio_Aplicado.id_investigacion = $1) as float) as valor;");
+
+const query_boolean= ("SELECT 'Justifica el tema/problematica' as item ,(SELECT count(Cita.id_cita) FROM Cita JOIN Direccion_Uso ON Direccion_Uso.id_direccion_uso = Cita.id_direccion_uso JOIN Entidad_Uso ON Entidad_Uso.id_entidad_uso = Direccion_Uso.id_entidad_uso JOIN Unidad_Informacion ON Unidad_Informacion.id_unidad_informacion = Cita.id_unidad_informacion WHERE Entidad_Uso.nombre = 'Problematica' AND Unidad_Informacion.id_proyecto = $1) > 0 as valor" 
++ " UNION " +
+"SELECT 'Justifica el contexto/poblacion, unidad de estudio' as item, (SELECT count(Cita.id_cita) FROM Cita JOIN Direccion_Uso ON Direccion_Uso.id_direccion_uso = Cita.id_direccion_uso JOIN Entidad_Uso ON Entidad_Uso.id_entidad_uso = Direccion_Uso.id_entidad_uso JOIN Unidad_Informacion ON Unidad_Informacion.id_unidad_informacion = Cita.id_unidad_informacion WHERE Entidad_Uso.nombre = 'Contexto' AND Unidad_Informacion.id_proyecto = $1) > 0 as valor"
++ " UNION " +
+"SELECT 'Justifica tipo de investigacion' as item, (SELECT count(Cita.id_cita) FROM Cita JOIN Direccion_Uso ON Direccion_Uso.id_direccion_uso = Cita.id_direccion_uso JOIN Unidad_Informacion ON Unidad_Informacion.id_unidad_informacion = Cita.id_unidad_informacion WHERE Direccion_Uso.id_entidad_uso = 8 AND Unidad_Informacion.id_proyecto = $1)> 0 as valor"
++ " UNION " +
+"SELECT 'Tema novedoso no investigado' as item, (SELECT count(Proyecto.id_proyecto) FROM Proyecto WHERE Proyecto.id_problematica = (SELECT Problematica.id_problematica FROM Problematica JOIN Proyecto ON Proyecto.id_problematica = Problematica.id_problematica WHERE Proyecto.id_proyecto = $1) AND Proyecto.id_proyecto < 1) = 0 as valor");
 //------------------------------------
 
 module.exports.default = class DAO {
@@ -490,22 +514,46 @@ module.exports.default = class DAO {
 
   informe_calidad(values) {
     return new Promise((resolve, reject) => {
-      let informe_calidad = {};
+      var reportes = [];
       this.client.connect().catch((err) => {
         console.log('[-]Error en client connect. \n');
         console.log(err);
-        resolve(informe_calidad);
+        resolve(reportes);
       });
       this.client.query(query_informe_calidad, values, (err, result) => {
         if (err) {
-          console.log('[-]Error en client query.  \n');
+          console.log('[-]Error en client query - 1.  \n');
           console.log(err);
         }
         else {
-
+          console.log(result);
+          for(let i=0; i<result.rows.length; i++){
+            let reporte={};
+            reporte.item=result.rows[i].item;
+            reporte.valor=result.rows[i].valor;
+            reportes.push(reporte);
+          }
         }
-        this.client.end((err) => { console.log('[+]disconnected - indicios de sinergia') });
-        resolve(informe_calidad);
+        this.client.query(query_boolean, values, (err, result) => {
+          if (err) {
+            console.log('[-]Error en client query - 2.  \n');
+            console.log(err);
+          }
+          else {
+            for(let i=0; i<result.rows.length; i++){
+              let reporte={};
+              reporte.item=result.rows[i].item;
+              if (result.rows[i].valor)
+                reporte.valor=1;
+              else
+                reporte.valor=0;
+              reportes.push(reporte);
+            }
+          }
+          this.client.end((err) => { console.log('[+]disconnected - indicios de sinergia') });
+          console.log(reportes);
+          resolve(reportes);
+        });
       });
     });
   }
@@ -775,7 +823,7 @@ module.exports.default = class DAO {
             });
           }
           console.log('[+]Finalizacion de Recoleccion de informacion');
-          client.end((err) => { console.log('[+]disconnected - Recoleccion de info') });
+          this.client.end((err) => { console.log('[+]disconnected - Recoleccion de info') });
           resolve(Proyecto);
         });
       });

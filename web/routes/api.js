@@ -144,9 +144,11 @@ RouterPrincipal.post("/calculo_calidad", (req, res) => {
   console.log('[+]Entrada calculo calidad');
   const conexion= new DAO();
   values = [req.body.id];
-  conexion.informe_calidad(values).then((calidad) => {
+  console.log(values);
+  conexion.informe_calidad(values).then((reportes) => {
+    console.log(reportes);
     res.send({
-      calidad: calidad
+      reportes: reportes
     });
   });
 });
