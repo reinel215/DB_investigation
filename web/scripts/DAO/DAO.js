@@ -635,6 +635,8 @@ module.exports.default = class DAO {
                 Unidad_Informacion.fecha = result.rows[i].fecha;
                 Unidad_Informacion.tipo_fuente = result.rows[i].tipo_fuente;
                 Unidad_Informacion.base_noologica = result.rows[i].base_noologica;
+                Unidad_Informacion.titulo= result.rows[i].titulo;
+                Unidad_Informacion.cita_ref= i;
                 Unidad_Informacion.citas = [];
                 this.investigacion_restricciones_alcancesclient.query('SELECT Cita.*, Categoria_uso.nombre as categoria_uso, sub_titulo.nombre as sub_titulo, titulo.nombre as titulo, Entidad_Uso.nombre as entidad_uso FROM Cita JOIN Categoria_Uso ON Categoria_Uso.id_categoria_uso = Cita.id_categoria_uso JOIN Sub_Titulo ON Sub_Titulo.id_sub_titulo = Cita.id_sub_titulo JOIN Titulo ON Titulo.id_titulo = Sub_Titulo.id_titulo JOIN Direccion_Uso ON Direccion_Uso.id_direccion_Uso = Cita.id_direccion_uso JOIN Entidad_Uso ON Entidad_Uso.id_entidad_uso = Direccion_Uso.id_entidad_uso WHERE Cita.id_unidad_informacion = $1',
                   [result.rows[i].id_unidad_informacion], (err, result) => {

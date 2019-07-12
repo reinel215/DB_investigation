@@ -152,7 +152,7 @@ class Investigation extends Component {
                             </div>
                         </div>
                     </div>
-                    <div className="row d-flex justify-content-center mb-3 calidad-section">
+                    <div className="row d-flex justify-content-center mb-3">
                         <div className="col-6 pb-2">
                             {Reporte}
                         </div>
