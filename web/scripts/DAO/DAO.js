@@ -24,7 +24,7 @@ const query_register = 'INSERT INTO Usuario (nombres, apellidos, correo, hash_pa
 const query_cont_proy = 'SELECT COUNT(*) FROM Proyecto as A JOIN Usuario_Proyecto B ON B.id_proyecto = A.id_proyecto WHERE B.id_usuario = $1';
 const query_actions = 'SELECT Permiso.* FROM Permiso JOIN Rol ON Rol.id_permiso = Permiso.id_permiso JOIN Tipo_Usuario ON Tipo_Usuario.id_tipo_usuario = rol.id_tipo_usuario WHERE Tipo_Usuario.id_tipo_usuario = $1';
 const query_investigations = 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto WHERE Usuario_Proyecto.id_usuario = $1';
-const query_investigation = 'SELECT Proyecto.identificacion, count(Unidad_Informacion.id_unidad_informacion) as Cantidad_UF, Investigacion.Objetivo_General, Investigacion.Pregunta_Investigacion, Investigacion.calidad, Tipo_Investigacion.nombre as tipo_inv, Modalidad.nombre as mod, Contexto.concepcion, Contexto.poblacion, Temporalidad.descripcion as temp FROM Proyecto JOIN Unidad_Informacion ON Unidad_Informacion.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Esquema_Formulado ON Esquema_Formulado.id_investigacion = Investigacion.id_investigacion JOIN Pregunta_Modular ON Pregunta_Modular.id_pregunta_modular = Esquema_Formulado.id_pregunta_modular JOIN Tipo_Investigacion ON Tipo_Investigacion.id_tipo_investigacion = Pregunta_Modular.id_tipo_investigacion JOIN Modalidad ON Modalidad.id_tipo_investigacion = Tipo_Investigacion.id_tipo_investigacion JOIN Contexto ON Contexto.id_contexto = Investigacion.id_contexto JOIN Temporalidad ON Temporalidad.id_temporalidad = Investigacion.id_Temporalidad WHERE Proyecto.id_proyecto = $1 GROUP BY Proyecto.identificacion, Investigacion.Objetivo_General, Investigacion.Pregunta_Investigacion, Investigacion.calidad, tipo_inv, concepcion, poblacion, temp, mod';
+const query_investigation = 'SELECT Entorno_Investigacion.descripcion as institucion, Proyecto.identificacion, count(Unidad_Informacion.id_unidad_informacion) as Cantidad_UF, Investigacion.Objetivo_General, Investigacion.Pregunta_Investigacion, Investigacion.calidad, Tipo_Investigacion.nombre as tipo_inv, Modalidad.nombre as mod, Contexto.concepcion, Contexto.poblacion, Temporalidad.descripcion as temp FROM Proyecto JOIN Unidad_Informacion ON Unidad_Informacion.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Esquema_Formulado ON Esquema_Formulado.id_investigacion = Investigacion.id_investigacion JOIN Pregunta_Modular ON Pregunta_Modular.id_pregunta_modular = Esquema_Formulado.id_pregunta_modular JOIN Tipo_Investigacion ON Tipo_Investigacion.id_tipo_investigacion = Pregunta_Modular.id_tipo_investigacion JOIN Modalidad ON Modalidad.id_tipo_investigacion = Tipo_Investigacion.id_tipo_investigacion JOIN Contexto ON Contexto.id_contexto = Investigacion.id_contexto JOIN Temporalidad ON Temporalidad.id_temporalidad = Investigacion.id_Temporalidad JOIN Entorno_investigacion ON Entorno_Investigacion.id_investigacion = Investigacion.id_investigacion WHERE Proyecto.id_proyecto = $1 GROUP BY Entorno_Investigacion.descripcion, Proyecto.identificacion, Investigacion.Objetivo_General, Investigacion.Pregunta_Investigacion, Investigacion.calidad, tipo_inv, concepcion, poblacion, temp, mod';
 const query_restricciones = 'SELECT contenido FROM Restriccion WHERE Restriccion.id_proyecto = $1';
 const query_alcances = 'SELECT contenido FROM Alcance WHERE Alcance.id_proyecto = $1';
 const query_unidades = 'SELECT Unidad_Informacion.id_unidad_informacion, Unidad_Informacion.titulo, Unidad_Informacion.autor, Unidad_Informacion.fecha FROM Unidad_Informacion JOIN Proyecto ON Proyecto.id_proyecto = Unidad_Informacion.id_proyecto WHERE Proyecto.id_proyecto = $1';
@@ -33,6 +33,11 @@ const query_investigacion_estadios = 'SELECT Estadio_Aplicado.id_estadio_aplicad
 const query_estadio_eventos = 'SELECT Evento.nombre as evento, Clase_Evento.nombre as clase_Evento, Abordaje.nombre as abordaje, Tipo_Evento.nombre as tipo_evento, Evento_Delimitado.descripcion, Evento_Delimitado.id_evento_delimitado FROM Evento_Delimitado JOIN Evento ON Evento.id_evento = Evento_Delimitado.id_evento JOIN Clase_Evento ON Clase_Evento.id_clase_evento = Evento_Delimitado.id_clase_Evento JOIN Abordaje ON Abordaje.id_Abordaje = Evento_Delimitado.id_abordaje JOIN Tipo_Evento ON Tipo_Evento.id_tipo_evento = Evento_Delimitado.id_tipo_evento WHERE Evento_Delimitado.id_estadio_aplicado = $1';
 const query_evento_sinergias = 'SELECT Clase_Sinergia.nombre as clase_sinergia, Sinergia.nombre as sinergia, Instrumento.nombre as instrumento, Sinergia.id_sinergia FROM Sinergia JOIN Clase_Sinergia ON Clase_Sinergia.id_clase_sinergia = Sinergia.id_clase_sinergia JOIN Aplicacion_Instrumental ON Aplicacion_Instrumental.id_sinergia = Sinergia.id_sinergia JOIN Instrumento ON Instrumento.id_instrumento = Aplicacion_Instrumental.id_instrumento WHERE Sinergia.id_evento_delimitado = $1';
 const query_sinergia_indicios = 'SELECT Aplicacion_Instrumental.identificacion, Indicio.contenido as indicio, Item.identificacion as item , Item.contenido as item_descripcion, Categoria.nombre as categoria, Categoria.aplicacion_temporal, Categoria.terminos as terminos, Categoria.descripcion as descripcion, Categoria.nivel_ausencia as nivel, Escala.nombre as escala, Fuente.valor as fuente, Muestra.valor as muestra FROM Indicio  JOIN Indicio_Item ON Indicio_Item.id_indicio = Indicio.id_indicio JOIN Item ON Item.id_item = Indicio_Item.id_item JOIN Instrumento_Item ON Instrumento_Item.id_item = Item.id_item JOIN Aplicacion_Instrumental ON Aplicacion_Instrumental.id_instrumento = Instrumento_Item.id_instrumento AND Aplicacion_Instrumental.id_sinergia = Instrumento_Item.id_sinergia JOIN Sinergia ON Sinergia.id_sinergia = Aplicacion_Instrumental.id_sinergia JOIN Fuente ON Fuente.id_sinergia = Sinergia.id_sinergia JOIN Muestra ON Muestra.id_muestra = Fuente.id_muestra JOIN Categoria ON Item.id_categoria = Categoria.id_categoria JOIN Escala ON Escala.id_escala = Categoria.id_escala WHERE Aplicacion_Instrumental.id_sinergia = $1';
+const query_investigacion_instrumentos = 'SELECT Instrumento.nombre FROM Instrumento JOIN Aplicacion_Instrumental ON Aplicacion_Instrumental.id_instrumento = Instrumento.id_instrumento JOIN Sinergia ON Sinergia.id_sinergia = Aplicacion_Instrumental.id_sinergia JOIN Evento_Delimitado ON Evento_Delimitado.id_evento_delimitado = Sinergia.id_evento_delimitado JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado WHERE Estadio_Aplicado.id_investigacion = $1 GROUP BY Instrumento.nombre';
+const query_autores_investigacion= 'SELECT Tipo_Usuario.nombre as tipo_usuario,Usuario.nombres, Usuario.apellidos FROM Usuario JOIN Usuario_Proyecto ON Usuario_Proyecto.id_usuario = Usuario.id_usuario JOIN Tipo_Usuario ON Tipo_Usuario.id_tipo_usuario = Usuario.id_tipo_usuario WHERE Usuario_Proyecto.id_proyecto = $1';
+const query_instituciones_usuario= 'SELECT Entidad_Institucional.nombre as institucion FROM Entidad_Institucional JOIN Registro_Institucional ON Registro_Institucional.id_entidad_institucional = Entidad_Institucional.id_entidad_institucional JOIN Usuario ON Usuario.id_usuario = Registro_Institucional.id_usuario WHERE Usuario.id_usuario = $1';
+
+const query_investigations_institucion = 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Usuario ON Usuario.id_usuario = Usuario_Proyecto.id_usuario JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Registro_Institucional ON Registro_Institucional.id_usuario = Usuario.id_usuario JOIN Entidad_Institucional ON Entidad_Institucional.id_entidad_institucional = Registro_Institucional.id_entidad_institucional WHERE Entidad_Institucional.id_entidad_institucional IN (SELECT Entidad_Institucional.id_entidad_institucional FROM Entidad_Institucional JOIN Registro_Institucional ON Registro_Institucional.id_entidad_institucional = Entidad_Institucional.id_entidad_institucional WHERE Registro_Institucional.id_usuario = $1) GROUP BY Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general';
 
 //Calculo de calidad
 const query_informe_calidad = ("SELECT 'No divaga' as item, cast((SELECT count(Cita.id_cita) FROM Cita JOIN Categoria_Uso ON Categoria_Uso.id_categoria_uso = Cita.id_categoria_uso JOIN Unidad_Informacion ON Unidad_Informacion.id_unidad_informacion = Cita.id_unidad_informacion WHERE Unidad_Informacion.id_proyecto = $1 AND Unidad_Informacion.autor = 'Autor' AND Categoria_Uso.id_categoria_uso = 2) as Float) / cast((SELECT count(Cita.id_cita) FROM Cita JOIN Categoria_Uso ON Categoria_Uso.id_categoria_uso = Cita.id_categoria_uso JOIN Unidad_Informacion ON Unidad_Informacion.id_unidad_informacion = Cita.id_unidad_informacion WHERE Unidad_Informacion.id_proyecto = $1 AND Categoria_Uso.id_categoria_uso = 2) as float) as valor " 
@@ -88,6 +93,31 @@ module.exports.default = class DAO {
         }
         this.client.end((err) => console.log('[+]disconnected - User Info'));
         resolve(contador_proy);
+      });
+    });
+  }
+
+  instituciones_usuario(values) {
+    let instituciones=[];
+    //Validacion de ingreso.
+    return new Promise((resolve, reject) => {
+      this.client.connect().catch((err) => {
+        console.log('[-]Error en client connect. instituciones de usuario\n');
+        console.log(err);
+        resolve(instituciones)
+      });
+      this.client.query(query_instituciones_usuario, values, (err, result) => {
+        if (err) {
+          console.log('[-]Error en client query. instituciones de usuario \n');
+          console.log(err);
+        }
+        else {
+          for(let i=0; i<result.rows.length; i++){
+            instituciones.push(result.rows[i].institucion);
+          }
+        }
+        this.client.end((err) => console.log('[+]disconnected - User Info'));
+        resolve(instituciones);
       });
     });
   }
@@ -212,18 +242,89 @@ module.exports.default = class DAO {
       //Validacion de ingreso.
       this.client.query(query_investigations, values, (err, result) => {
         if (err) {
+          console.log('[-]Error en client query. /api/user_investigations - investigaciones \n');
+          console.log(err);
+        }
+        else {
+          if (result.rows.length > 0)
+            for (let i = 0; i < result.rows.length; i++) {
+              let autores=[];
+              this.client.query(query_autores_investigacion, [result.rows[i].id_proyecto], (err, result) => {
+                if (err){
+                  console.log('[-]Error en client query. /api/user_investigations - autores \n');
+                  console.log(err);
+                }
+                else{
+                  for (let i=0; i<result.rows.length; i++){
+                    autores.push({
+                      nombres: result.rows[i].nombres,
+                      apellidos: result.rows[i].apellidos,
+                      tipo_usuario: result.rows[i].tipo_usuario
+                    })
+                  }
+                }
+              });
+              investigations.push({
+                identificacion: result.rows[i].identificacion,
+                id_proyecto: result.rows[i].id_proyecto,
+                pregunta_investigacion: result.rows[i].pregunta_investigacion,
+                calidad: result.rows[i].calidad,
+                objetivo_general: result.rows[i].objetivo_general,
+                autores: autores
+              });
+            }
+        }
+        this.client.end((err) => console.log('[+]disconnected - User Investigations'));
+        resolve(investigations);
+      });
+    });
+  }
+
+  investigaciones_institucion(values) {
+    return new Promise((resolve, reject) => {
+      let investigations = [];
+      this.client.connect().catch((err) => {
+        console.log('[-]Error en client connect. /api/user_investigations \n');
+        console.log(err);
+        resolve(investigations);
+      });
+      //Validacion de ingreso.
+      this.client.query(query_investigations_institucion, values, (err, result) => {
+        if (err) {
           console.log('[-]Error en client query. /api/user_investigations \n');
           console.log(err);
         }
         else {
           if (result.rows.length > 0)
             for (let i = 0; i < result.rows.length; i++) {
+              let autores=[];
+              this.client.query(query_autores_investigacion, [result.rows[i].id_investigacion], (err, result) => {
+                if (err){
+                  console.log('[-]Error en client query. /api/user_investigations \n');
+                  console.log(err);
+                }
+                else{
+                  for (let i=0; i<result.rows.length; i++){
+                    autores.push({
+                      nombres: result.rows[i].nombres,
+                      apellidos: result.rows[i].apellidos,
+                      tipo_usuario: result.rows[i].tipo_usuario
+                    });
+                  }
+                }
+              });
+              let instituciones=[];
+              for(let j=0; j<result.rows.length; j++){
+                instituciones.push(result.rows[j].institucion);
+              }
               investigations.push({
                 identificacion: result.rows[i].identificacion,
                 id_proyecto: result.rows[i].id_proyecto,
                 pregunta_investigacion: result.rows[i].pregunta_investigacion,
                 calidad: result.rows[i].calidad,
-                objetivo_general: result.rows[i].objetivo_general
+                objetivo_general: result.rows[i].objetivo_general,
+                autores: autores,
+                instituciones: instituciones
               })
             }
         }
@@ -249,6 +350,10 @@ module.exports.default = class DAO {
         }
         else {
           if (result.rows.length > 0) {
+            let instituciones=[];
+            for(let j=0; j<result.rows.length; j++){
+              instituciones.push(result.rows[j].institucion);
+            }
             investigation = {
               identificacion: result.rows[0].identificacion,
               cantidad_uf: result.rows[0].cantidad_uf,
@@ -261,7 +366,8 @@ module.exports.default = class DAO {
               mod: result.rows[0].mod,
               tipo_inv: result.rows[0].tipo_inv,
               calidad: result.rows[0].calidad,
-              cantidad_uf: result.rows[0].cantidad_uf
+              cantidad_uf: result.rows[0].cantidad_uf,
+              instituciones:instituciones
             }
           }
         }
@@ -311,6 +417,34 @@ module.exports.default = class DAO {
           restricciones: restricciones,
           alcances: alcances
         })
+      });
+    });
+  }
+
+  investigacion_instrumentos(values){
+    return new Promise((resolve, reject) => {
+      let instrumentos = [];
+      this.client.connect().catch((err) => {
+        console.log('[-]Error en client connect. /api/user_investigation_restricciones_alcances \n');
+        console.log(err);
+        resolve(instrumentos)
+      });
+      //Validacion de ingreso.
+      this.client.query(query_investigacion_instrumentos, values, (err, result) => {
+        if (err) {
+          console.log('[-]Error en client query. /api/user_investigation_restricciones_alcances \n');
+          console.log(err);
+        }
+        else {
+          if (result.rows.length > 0) {
+            for (let i = 0; i < result.rows.length; i++) {
+              instrumentos.push(result.rows[i].nombre)
+            }
+          }
+        }
+        console.log(instrumentos);
+        this.client.end((err) => { console.log('[+]disconnected - investigacion instrumentos')});
+        resolve(instrumentos);
       });
     });
   }

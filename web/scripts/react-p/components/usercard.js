@@ -8,7 +8,8 @@ class Usercard extends Component {
         super(props);
         this.state={nombre: '',
         tipo_usuario: 0,
-        contador_proy: 0};
+        contador_proy: 0,
+        instituciones: []};
     }
 
     componentDidMount(){
@@ -23,7 +24,8 @@ class Usercard extends Component {
                     this.setState({
                         nombre: json.nombre,
                         tipo_usuario: json.tipo_usuario,
-                        contador_proy: json.contador_proy
+                        contador_proy: json.contador_proy,
+                        instituciones: json.instituciones
                     });
                 });
         }
@@ -38,6 +40,14 @@ class Usercard extends Component {
                 <div className="card-body">
                     <h3 className="card-title">{this.state.nombre}</h3>
                     <p className="card-text">Contador de proyectos : <span className="badge badge-primary mx-auto"> {this.state.contador_proy}</span></p>
+                    <h3 className="card-title">Instituciones Vinculadas</h3>
+                    <ul>
+                        {
+                            this.state.instituciones.map((institucion,i)=>{
+                                <li>{institucion}</li>
+                            })
+                        }
+                    </ul>
                 </div>
             </div>
         </div>

@@ -192,7 +192,7 @@ module.exports.default = class Generador_Documento {
             pObj.addText(unidad_info.autor + ' . (' + unidad_info.fecha + '). ' + unidad_info.titulo + '[' + unidad_info.cita_ref +']', { font_face: 'Times New Roman', font_size: 12 });
             pObj.addLineBreak();
         });
-        pObj.generate(this.direccion);
+        pObj.generate(this.direccion + 'informe.docx');
     }
 
 }

@@ -1,40 +1,41 @@
 import React, { Component } from 'react';
 //Router para renderizar los componentes segun direccion de los mismos.
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import ReporteCalidad from './ReporteCalidad';
 //const Office = require('../../generar_informe.js');
 
 var linkUF;
 var linkINV;
-var Reporte=(<div className="d-none"></div>);
+var Reporte = (<div className="d-none"></div>);
 
 class Investigation extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
-        const {id}= this.props.match.params;
-        this.state={
-            investigation:{},
+        const { id } = this.props.match.params;
+        this.state = {
+            investigation: {},
             loaded: false,
             formload: false,
             id: id,
             alcances: [],
-            restricciones: []
+            restricciones: [],
+            instrumentos: []
         };
-        linkUF="/home/investigation/" + this.props.match.params.id + "/UF";
-        linkINV="/home/investigation/" + this.props.match.params.id + "/INV";
-        this.handleCalculoCalidad= this.handleCalculoCalidad.bind(this);
+        linkUF = "/home/investigation/" + this.props.match.params.id + "/UF";
+        linkINV = "/home/investigation/" + this.props.match.params.id + "/INV";
+        this.handleCalculoCalidad = this.handleCalculoCalidad.bind(this);
         this.descargarInforme = this.descargarInforme.bind(this);
-        this.reporteCalidad= React.createRef();
-        this.actualizarCalidad= this.actualizarCalidad.bind(this);
+        this.reporteCalidad = React.createRef();
+        this.actualizarCalidad = this.actualizarCalidad.bind(this);
     }
 
-    descargarInforme(event){
+    descargarInforme(event) {
         var fileselector = document.getElementById('fileselector');
         fetch('/api/descarga_informe', {
             method: 'POST', // or 'PUT'
             body: JSON.stringify(this.state), // data can be `string` or {object}!
-            headers:{
+            headers: {
                 'Content-Type': 'application/json'
             }
         }).then(
@@ -46,87 +47,106 @@ class Investigation extends Component {
             }).then(json => {
                 //const documento= new Office(json.proyecto, fileselector.value);
                 //documento.generar_informe();    
-        });
+            });
     }
 
-    actualizarCalidad(calidad){
+    actualizarCalidad(calidad) {
         var investigation = this.state.investigation;
-        investigation.calidad=calidad;
+        investigation.calidad = calidad;
         this.setState({
-            investigation:investigation
+            investigation: investigation
         });
     }
 
-    handleCalculoCalidad(event){
-        Reporte =(<ReporteCalidad id={this.state.id} ref={this.reporteCalidad} actualizarCalidad={this.actualizarCalidad}></ReporteCalidad>);
+    handleCalculoCalidad(event) {
+        Reporte = (<ReporteCalidad id={this.state.id} ref={this.reporteCalidad} actualizarCalidad={this.actualizarCalidad}></ReporteCalidad>);
         this.setState(this.state);
     }
 
-    componentDidMount(){
-        if(!this.state.loaded){
-                fetch('/api/user_investigation', {
-                        method: 'POST', // or 'PUT'
-                        body: JSON.stringify(this.state), // data can be `string` or {object}!
-                        headers:{
-                            'Content-Type': 'application/json'
-                        }
-                    }).then(
-                    res => {
-                        if (res.status == 200)
-                            return res.json()
-                        else
-                            return null;
-                    }).then(json => {
-                            this.setState({
-                                investigation:json.investigation,
-                                loaded: json.loaded
-                            });
+    componentDidMount() {
+        if (!this.state.loaded) {
+            fetch('/api/user_investigation', {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(this.state), // data can be `string` or {object}!
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(
+                res => {
+                    if (res.status == 200)
+                        return res.json()
+                    else
+                        return null;
+                }).then(json => {
+                    this.setState({
+                        investigation: json.investigation,
+                        loaded: json.loaded
                     });
+                });
         }
-        if(!this.state.formload){
+        if (!this.state.formload) {
+            var restricciones;
+            var alcances;
             fetch('/api/user_investigation_restricciones_alcances', {
                 method: 'POST', // or 'PUT'
                 body: JSON.stringify(this.state), // data can be `string` or {object}!
-                headers:{
+                headers: {
                     'Content-Type': 'application/json'
                 }
-            }).then( res => {
-                if(res.status == 200)
+            }).then(res => {
+                if (res.status == 200)
                     return res.json();
                 else
                     return null;
-            }).then( json => {
-                this.setState({
-                    restricciones: json.restricciones,
-                    alcances: json.alcances,
-                    formload: true
-                })
+            }).then(json => {
+                restricciones = json.restricciones;
+                alcances = json.alcances;
+
+                fetch('/api/investigation_instrumentos', {
+                    method: 'POST', // or 'PUT'
+                    body: JSON.stringify(this.state), // data can be `string` or {object}!
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(res => {
+                    if (res.status == 200)
+                        return res.json();
+                    else
+                        return null;
+                }).then(json => {
+                    this.setState({
+                        restricciones: restricciones,
+                        alcances: alcances,
+                        instrumentos: json.instrumentos,
+                        formload: true
+                    });
+                });
             });
         }
     }
 
-    render(){
+    render() {
         var content;
-        if(!this.state.loaded){
-            content=(<div className="container row align-items-center d-flex justify-content-center my-auto">
-                        <div className="spinner-border text-dark" role="status">
-                            <span className="sr-only">Loading...</span>
-                        </div>
-                    </div>);
+        if (!this.state.loaded) {
+            content = (<div className="container row align-items-center d-flex justify-content-center my-auto">
+                <div className="spinner-border text-dark" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+            </div>);
         }
-        else{
-            const {investigation} = this.state;
+        else {
+            const { investigation } = this.state;
             var calidadBadge;
-                if (investigation.calidad < 10 || investigation.calidad == null){
-                    calidadBadge= (<span className="badge badge-danger mx-auto badge-calidad my-1 mx-auto text-center">{investigation.calidad + 1}</span>);
-                }
-                else if (investigation.calidad > 10){
-                    calidadBadge= (<span className="badge badge-primary mx-auto badge-calidad my-1 mx-auto text-center">{investigation.calidad}</span>);
-                }
-                if(investigation.calidad > 20){
-                    calidadBadge= (<span className="badge badge-success mx-auto badge-calidad my-1 mx-auto text-center">{investigation.calidad}</span>);
-                }
-            content= (<div className="container card bg-dark text-light content-extended">
+            if (investigation.calidad < 10 || investigation.calidad == null) {
+                calidadBadge = (<span className="badge badge-danger mx-auto badge-calidad my-1 mx-auto text-center">{Math.round(investigation.calidad)}</span>);
+            }
+            else if (investigation.calidad > 10) {
+                calidadBadge = (<span className="badge badge-primary mx-auto badge-calidad my-1 mx-auto text-center">{Math.round(investigation.calidad)}</span>);
+            }
+            if (investigation.calidad > 20) {
+                calidadBadge = (<span className="badge badge-success mx-auto badge-calidad my-1 mx-auto text-center">{Math.round(investigation.calidad)}</span>);
+            }
+            content = (<div className="container card bg-dark text-light content-extended">
                 <h2 className="card-header row col-12 bg-primary text-light title-proy">{investigation.identificacion}</h2>
                 <div className="card-body">
                     <div className="list-group list-group-flush row mb-2">
@@ -146,9 +166,21 @@ class Investigation extends Component {
                     </div>
                     <div className="row d-flex justify-content-center mb-3 calidad-section">
                         <div className="col-6 pb-2">
+                            <h5 className="mx-auto text-center">Instituciones</h5>
+                            <ul>
+                            {
+                                investigation.instituciones.map((institucion,i) => {
+                                    return(<li>{institucion}</li>)
+                                })
+                            }
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="row d-flex justify-content-center mb-3 calidad-section">
+                        <div className="col-6 pb-2">
                             <h5 className="mx-auto text-center">Calidad</h5>
                             <div className="container d-flex justify-content-center">
-                                    {calidadBadge}
+                                {calidadBadge}
                             </div>
                         </div>
                     </div>
@@ -160,33 +192,33 @@ class Investigation extends Component {
                     <div className="row d-flex justify-content-center mb-3 calidad-section">
                         <div className="col-6 pb-2">
                             <div className="container d-flex justify-content-center">
-                                    <button className="btn btn-info" onClick={this.handleCalculoCalidad}>Calcular calidad</button>
+                                <button className="btn btn-info" onClick={this.handleCalculoCalidad}>Calcular calidad</button>
                             </div>
                         </div>
                     </div>
                     <div className="contexto-div row mb-2 pt-2">
-                            <h3 className="text-weight-bold mb-2 col-12">Contexto</h3>
-                            <div className="col-6">
-                                <h5>Descripcion:</h5>
-                                <p>{investigation.contexto.concepcion}</p>
-                            </div>
-                            <div className="col-6">
-                                <h5>Poblacion:</h5>
-                                <p>{investigation.contexto.poblacion}</p>
-                                <h5>Temporalidad:</h5>
-                                <p>{investigation.contexto.temporalidad}</p>
-                            </div>
+                        <h3 className="text-weight-bold mb-2 col-12">Contexto</h3>
+                        <div className="col-6">
+                            <h5>Descripcion:</h5>
+                            <p>{investigation.contexto.concepcion}</p>
+                        </div>
+                        <div className="col-6">
+                            <h5>Poblacion:</h5>
+                            <p>{investigation.contexto.poblacion}</p>
+                            <h5>Temporalidad:</h5>
+                            <p>{investigation.contexto.temporalidad}</p>
+                        </div>
                     </div>
                     <div className="row">
                         <div className="col-6" id="alcances">
                             <h5>Alcances:</h5>
                             <div data-spy="scroll" data-target="#alcances" data-offset="0">
                                 <ul>
-                                {   
-                                    this.state.alcances.map((alcance, i) => {
-                                        return (<li>{alcance}</li>);
-                                    })
-                                }
+                                    {
+                                        this.state.alcances.map((alcance, i) => {
+                                            return (<li>{alcance}</li>);
+                                        })
+                                    }
                                 </ul>
                             </div>
                         </div>
@@ -194,11 +226,11 @@ class Investigation extends Component {
                             <h5>Restricciones:</h5>
                             <div data-spy="scroll" data-target="#restricciones" data-offset="0">
                                 <ul>
-                                {
-                                    this.state.restricciones.map((restriccion, i) => {
-                                        return (<li>{restriccion}</li>);
-                                    })
-                                }
+                                    {
+                                        this.state.restricciones.map((restriccion, i) => {
+                                            return (<li>{restriccion}</li>);
+                                        })
+                                    }
                                 </ul>
                             </div>
                         </div>
@@ -236,10 +268,35 @@ class Investigation extends Component {
                             <div className="card bg-primary text-light mx-auto">
                                 <h5 class="card-title text-center text-dark">Generar Informe</h5>
                                 <div className="card-footer d-flex justify-content-center">
-                                    <input id="fileselector" className="d-none"  type="file" onChange={this.descargarInforme} webkitdirectory directory multiple/>
+                                    <input id="fileselector" className="d-none" type="file" onChange={this.descargarInforme} webkitdirectory directory multiple />
                                     <button type="button" className="btn btn-light text-dark button-select" onClick={() => document.getElementById('fileselector').click()}>
                                         Descargar
                                     </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row d-flex justify-content-center py-2 mb-2">
+                        <div className="col-10">
+                            <div className="card bg-light text-light mx-auto">
+                                <h5 class="card-title text-center text-dark">Lista de instrumentos</h5>
+                                <div className="card-footer d-flex justify-content-center">
+                                    <p>
+                                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#lista_instrumento" aria-expanded="false" aria-controls="lista_instrumento">
+                                            ...
+                                        </button>
+                                    </p>
+                                    <div className="card bg-primary text-light collapse" id="lista_instrumento">
+                                        <div className="card-body overflow-auto">
+                                            <ul>
+                                                {
+                                                    this.state.instrumentos.map((instrumento, i) => {
+                                                        return (<li><strong>{instrumento}</strong></li>);
+                                                    })
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -248,7 +305,7 @@ class Investigation extends Component {
             </div>);
         }
 
-        return(
+        return (
             <div className="Investigation mx-auto">
                 {content}
             </div>
