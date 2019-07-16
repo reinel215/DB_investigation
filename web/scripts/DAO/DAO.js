@@ -37,6 +37,12 @@ const query_investigacion_instrumentos = 'SELECT Instrumento.nombre FROM Instrum
 const query_autores_investigacion= 'SELECT Tipo_Usuario.nombre as tipo_usuario,Usuario.nombres, Usuario.apellidos FROM Usuario JOIN Usuario_Proyecto ON Usuario_Proyecto.id_usuario = Usuario.id_usuario JOIN Tipo_Usuario ON Tipo_Usuario.id_tipo_usuario = Usuario.id_tipo_usuario WHERE Usuario_Proyecto.id_proyecto = $1';
 const query_instituciones_usuario= 'SELECT Entidad_Institucional.nombre as institucion FROM Entidad_Institucional JOIN Registro_Institucional ON Registro_Institucional.id_entidad_institucional = Entidad_Institucional.id_entidad_institucional JOIN Usuario ON Usuario.id_usuario = Registro_Institucional.id_usuario WHERE Usuario.id_usuario = $1';
 
+//Busquedas segun seccion
+const query_busqueda_evento= 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Estadio_Aplicado ON Estadio_Aplicado.id_investigacion = Investigacion.id_investigacion JOIN Evento_Delimitado ON Evento_Delimitado.id_estadio_aplicado = Estadio_Aplicado.id_estadio_aplicado JOIN Evento ON Evento.id_evento = Evento_Delimitado.id_evento WHERE Evento.nombre LIKE $1 GROUP BY Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general';
+const query_busqueda_proyecto= 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Estadio_Aplicado ON Estadio_Aplicado.id_investigacion = Investigacion.id_investigacion WHERE Proyecto.identificacion LIKE $1 GROUP BY Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general';
+
+
+
 const query_investigations_institucion = 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Usuario ON Usuario.id_usuario = Usuario_Proyecto.id_usuario JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Registro_Institucional ON Registro_Institucional.id_usuario = Usuario.id_usuario JOIN Entidad_Institucional ON Entidad_Institucional.id_entidad_institucional = Registro_Institucional.id_entidad_institucional WHERE Entidad_Institucional.id_entidad_institucional IN (SELECT Entidad_Institucional.id_entidad_institucional FROM Entidad_Institucional JOIN Registro_Institucional ON Registro_Institucional.id_entidad_institucional = Entidad_Institucional.id_entidad_institucional WHERE Registro_Institucional.id_usuario = $1) GROUP BY Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general';
 
 //Calculo de calidad
@@ -231,6 +237,58 @@ module.exports.default = class DAO {
     });
   }
 
+  busqueda_proyecto(values) {
+    return new Promise((resolve, reject) => {
+      let investigations = [];
+      this.client.connect().catch((err) => {
+        console.log('[-]Error en client connect. /api/user_investigations \n');
+        console.log(err);
+        resolve(investigations);
+      });
+      let busqueda= '%' + values[0] + '%';
+      values = [busqueda];
+      //Validacion de ingreso.
+      this.client.query(query_busqueda_proyecto, values, (err, result) => {
+        if (err) {
+          console.log('[-]Error en client query. /api/user_investigations - investigaciones \n');
+          console.log(err);
+        }
+        else {
+          if (result.rows.length > 0)
+            for (let i = 0; i < result.rows.length; i++) {
+              let autores=[];
+              this.client.query(query_autores_investigacion, [result.rows[i].id_proyecto], (err, result) => {
+                if (err){
+                  console.log('[-]Error en client query. /api/user_investigations - autores \n');
+                  console.log(err);
+                }
+                else{
+                  for (let i=0; i<result.rows.length; i++){
+                    autores.push({
+                      nombres: result.rows[i].nombres,
+                      apellidos: result.rows[i].apellidos,
+                      tipo_usuario: result.rows[i].tipo_usuario
+                    })
+                  }
+                }
+              });
+              investigations.push({
+                identificacion: result.rows[i].identificacion,
+                id_proyecto: result.rows[i].id_proyecto,
+                pregunta_investigacion: result.rows[i].pregunta_investigacion,
+                calidad: result.rows[i].calidad,
+                objetivo_general: result.rows[i].objetivo_general,
+                autores: autores
+              });
+              console.log(investigations);
+            }
+        }
+        this.client.end((err) => console.log('[+]disconnected - User Investigations'));
+        resolve(investigations);
+      });
+    });
+  }
+
   investigaciones_usuario(values) {
     return new Promise((resolve, reject) => {
       let investigations = [];
@@ -284,14 +342,14 @@ module.exports.default = class DAO {
     return new Promise((resolve, reject) => {
       let investigations = [];
       this.client.connect().catch((err) => {
-        console.log('[-]Error en client connect. /api/user_investigations \n');
+        console.log('[-]Error en client connect. /api/institucion_investigaciones \n');
         console.log(err);
         resolve(investigations);
       });
       //Validacion de ingreso.
       this.client.query(query_investigations_institucion, values, (err, result) => {
         if (err) {
-          console.log('[-]Error en client query. /api/user_investigations \n');
+          console.log('[-]Error en client query. /api/institucion_investigaciones \n');
           console.log(err);
         }
         else {
@@ -300,7 +358,7 @@ module.exports.default = class DAO {
               let autores=[];
               this.client.query(query_autores_investigacion, [result.rows[i].id_investigacion], (err, result) => {
                 if (err){
-                  console.log('[-]Error en client query. /api/user_investigations \n');
+                  console.log('[-]Error en client query. /api/institucion_investigaciones \n');
                   console.log(err);
                 }
                 else{

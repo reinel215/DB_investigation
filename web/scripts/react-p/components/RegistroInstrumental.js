@@ -44,11 +44,10 @@ class RegistroInstrumental extends Component {
     }
 
     render(){
-        console.log('entrada a indicios');
         var content;
 
         if(this.state.loaded){
-            if(this.state.indicios.length != 0 || this.state.id != -1){
+            if(this.state.Indicios.length != 0 && this.state.id != -1){
                 content=(
                     <div className="container p-0 d-flex justify-content-start">
                         <div className="col-md-12 container overflow-auto section-left py-2">
@@ -90,7 +89,7 @@ class RegistroInstrumental extends Component {
                 );
             }
             else{
-                if (this.state.indicios.length == 0)
+                if (this.state.Indicios.length == 0)
                     content=(
                     <div className="container text-light d-flex justify-content-center h-100 align-items-center">
                         <h3 className="my-auto mx-auto badge badge-info">No hay Operacionalizacion</h3>

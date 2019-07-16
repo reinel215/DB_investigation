@@ -8,6 +8,7 @@ import Selection from './components/selection.js';
 import UnidadInfo from './components/UnidadInfo.js';
 import Investigation from './components/investigation.js';
 import Recorrido from './components/Recorrido.js';
+import Buscador from './components/buscador.js';
 import { createBrowserHistory } from "history";
 const customHistory = createBrowserHistory();
 
@@ -35,6 +36,7 @@ class Aplicacion extends Component {
               <div className="container margin-content col-md-8">
                   <Route path="/home" exact component={Accion}></Route>
                   <Route path="/home/investigation/:id" exact component={Investigation}></Route>
+                  <Route path="/home/buscador" exact component={Buscador}></Route>
               </div>
             </div>
           </Router>

@@ -255,7 +255,7 @@ class Investigation extends Component {
                                 <h5 class="card-title text-center text-dark">Recorrido de la Investigacion</h5>
                                 <div className="card-footer d-flex justify-content-center">
                                     <button type="button" className="btn btn-primary button-select">
-                                        <Link to={linkINV} className="text-light">
+                                        <Link to={linkINV} link="mirame estoy aca" className="text-light">
                                             Detalle
                                         </Link>
                                     </button>

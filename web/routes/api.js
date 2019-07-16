@@ -26,6 +26,7 @@ RouterPrincipal.get("/user_info", async (req, res) => {
   conexion.contador_proyectos([req.session.id_usuario]).then((contador_proy) => {
     info.contador_proy = contador_proy;
     conexion2= new DAO();
+    console.log('entrada a instituciones de usuario');
     conexion2.instituciones_usuario([req.session.id_usuario]).then((instituciones) => {
       info.instituciones= instituciones;
       res.send(info);
@@ -68,6 +69,64 @@ RouterPrincipal.get("/user_investigations", (req, res) => {
     });
   }
 });
+
+RouterPrincipal.post("/busqueda", (req,res) => {
+  console.log('[+]Entrada a busqueda');
+  const conexion= new DAO();
+  values = [req.body.busqueda];
+  console.log(values);
+  if(req.body.section == 'Proyecto'){
+    console.log('[+]Entrada a busqueda por proyecto')
+    conexion.busqueda_proyecto(values).then((resultados) => {
+      console.log(resultados);
+      res.send({
+        resultados: resultados
+      });
+    });
+  }
+  else if(req.body.section == 'Evento'){
+    conexion.busqueda_evento(values).then((resultados) => {
+      res.send({
+        resultados: resultados
+      });
+    });
+  }
+  else if(req.body.section == 'Objetivo_General'){
+    conexion.busqueda_objetivo_general(values).then((resultados) => {
+      res.send({
+        resultados: resultados
+      });
+    });
+  }
+  else if(req.body.section == 'Pregunta_Investigacion'){
+    conexion.busqueda_pregunta_investigacion(values).then((resultados) => {
+      res.send({
+        resultados: resultados
+      });
+    });
+  }
+  else if(req.body.section == 'Entorno_Investigacion'){
+    conexion.busqueda_entorno_investigacion(values).then((resultados) => {
+      res.send({
+        resultados: resultados
+      });
+    });
+  }
+  else if(req.body.section == 'Contexto'){
+    conexion.busqueda_contexto(values).then((resultados) => {
+      res.send({
+        resultados: resultados
+      });
+    });
+  }
+  else if(req.body.section == 'Temporalidad'){
+    conexion.busqueda_temporalidad(values).then((resultados) => {
+      res.send({
+        resultados: resultados
+      });
+    });
+  }
+})
 
 RouterPrincipal.post("/user_investigation", (req, res) => {
   console.log('[+]Entrada a user_investigation')

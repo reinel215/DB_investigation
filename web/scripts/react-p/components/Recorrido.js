@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import fetch from 'node-fetch';
 import EventoDelim from './EventoDelim.js';
+import { Link } from 'react-router-dom';
 
 class Recorrido extends Component {
 
     constructor(props){
         super(props);
         const {id}= this.props.match.params;
+        const link='/home/investigation/'+ id;
         this.state={
             id: id,
             estadios: [],
             loaded: false,
-            estadio: -1
+            estadio: -1,
+            link: link
         }
         this.handleSelecction= this.handleSelecction.bind(this);
     }
@@ -48,10 +51,15 @@ class Recorrido extends Component {
     render(){
         var content;
 
+        console.log(this.props.history);
+
         if(this.state.loaded){
             if(this.state.estadios.length > 0){
                 content=(
                     <div className="container row Recorrido h-75 p-2 contenedor-uf bg-dark content-extended">
+                        <Link to={this.state.link} className="nav-link button-exit">
+                            X
+                        </Link>
                         <div className="col-md-3 container overflow-auto section-left py-2">
                         <h4 className="Estadio-title badge badge-light text-dark text-center">Estadios</h4>
                         {

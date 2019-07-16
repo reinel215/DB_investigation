@@ -57,13 +57,10 @@
   right:0;
   top:0;
   color: rgba(255, 255, 255, 0.5);
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color:none;
   transition: background-color 200ms, color 200ms;
-}
-
-.button-exit:hover{
-  background-color:rgba(0, 0, 0, 0.9);
-  transition: background-color 200ms;
+  text-decoration: none;
+  z-index:6;
 }
 
 .button-select{
@@ -151,6 +148,92 @@
 
 .selected{
   transition: color 300ms;
+}
+
+/* Buscador */
+
+.searchbar{
+  margin-bottom: auto;
+  margin-top: auto;
+  height: 60px;
+  background-color: #353b48;
+  border-radius: 30px;
+  padding: 10px;
+}
+
+.seleccion_search{
+  margin-bottom: auto;
+  margin-top: 3%;
+  height: 5%;
+  background-color: #353b48;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+.search_input{
+  color: white;
+  border: 0;
+  outline: 0;
+  background: none;
+  width: 0;
+  caret-color:transparent;
+  line-height: 40px;
+  transition: width 0.4s linear;
+}
+
+.searchbar:hover > .search_input{
+  padding: 0 10px;
+  width: 450px;
+  caret-color:red;
+  transition: width 0.4s linear;
+}
+
+.searchbar:hover > .search_icon{
+  background: rgb(255, 255, 255);
+  color: #e74c3c;
+}
+
+.search_icon{
+  height: 40px;
+  width: 40px;
+  float: right;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  color:white;
+}
+
+  /*_____________________________*/
+
+.Buscador{
+  animation-name: buscador;
+  animation-duration: 400ms;
+}
+
+.Resultados{
+  animation-name: resultados;
+  animation-duration: 600ms;
+}
+
+@keyframes resultados{
+  0%{
+    opacity:0;
+    transform: scaleY(0);
+  }
+  100%{
+    opacity:1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes buscador{
+  0%{
+    opacity:0;
+  }
+  100%{
+    opacity:1;
+  }
 }
 
 @keyframes extension{

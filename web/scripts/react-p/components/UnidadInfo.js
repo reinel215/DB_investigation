@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import fetch from 'node-fetch';
 import Citas from './Citas.js';
+import { Link } from 'react-router-dom';
 
 class UnidadInfo extends Component {
 
     constructor(props){
         super(props);
         const {id}= this.props.match.params;
+        const link='/home/investigation/'+ id;
         this.state={
             id: id,
             unidades: [],
             loaded: false,
-            unidad: -1
+            unidad: -1,
+            link: link
         }
         this.handleSelecction= this.handleSelecction.bind(this);
     }
@@ -53,6 +56,9 @@ class UnidadInfo extends Component {
             if(this.state.unidades.length > 0){
                 content=(
                     <div className="container row w-75 h-75 p-2 contenedor-uf bg-dark content-extended pb-2">
+                        <Link to={this.state.link} className="nav-link button-exit">
+                            X
+                        </Link>
                         <div className="col-md-6 container overflow-auto section-left">
                             {
                                 this.state.unidades.map((unidad, i) => {

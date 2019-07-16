@@ -47,11 +47,9 @@ class Selection extends Component {
                             })
                         }
                     </ol>
-                    <button
-                        className="button-select button-exit"
-                        onClick={this.props.history.goBack}>
+                    <Link to='/home' className="nav-link button-exit">
                         X
-                            </button>
+                    </Link>
                     <div className="carousel-inner">
                         {
                             this.state.investigations.map((investigation, i) => {
@@ -70,7 +68,7 @@ class Selection extends Component {
                                 if (investigation.calidad == 100)
                                     badge = "badge badge-success mr-auto";
                                 return (<div className={classN}>
-                                    <div className="card col-md-6 mx-auto card-Investigation">
+                                    <div className="card col-md-6 mx-auto card-Investigation h-50 overflow-auto">
                                         <h3>Proyecto</h3>
                                         <h5 className="card-header">{investigation.identificacion}</h5>
                                         <div className="card-body">

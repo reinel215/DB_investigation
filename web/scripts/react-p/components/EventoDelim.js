@@ -55,7 +55,7 @@ class EventoDelim extends Component {
         var content;
 
         if(this.state.loaded){
-            if(this.state.eventos.length > 0 || this.state.id != -1){
+            if(this.state.eventos.length > 0 && this.state.id != -1){
                 content=(
                     <div className="container p-0 d-flex justify-content-start">
                         <div className="col-md-4 container overflow-auto section-left py-2">
