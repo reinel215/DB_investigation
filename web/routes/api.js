@@ -75,57 +75,13 @@ RouterPrincipal.post("/busqueda", (req,res) => {
   const conexion= new DAO();
   values = [req.body.busqueda];
   console.log(values);
-  if(req.body.section == 'Proyecto'){
     console.log('[+]Entrada a busqueda por proyecto')
-    conexion.busqueda_proyecto(values).then((resultados) => {
-      console.log(resultados);
-      res.send({
-        resultados: resultados
-      });
-    });
-  }
-  else if(req.body.section == 'Evento'){
-    conexion.busqueda_evento(values).then((resultados) => {
-      res.send({
-        resultados: resultados
-      });
-    });
-  }
-  else if(req.body.section == 'Objetivo_General'){
-    conexion.busqueda_objetivo_general(values).then((resultados) => {
-      res.send({
-        resultados: resultados
-      });
-    });
-  }
-  else if(req.body.section == 'Pregunta_Investigacion'){
-    conexion.busqueda_pregunta_investigacion(values).then((resultados) => {
-      res.send({
-        resultados: resultados
-      });
-    });
-  }
-  else if(req.body.section == 'Entorno_Investigacion'){
-    conexion.busqueda_entorno_investigacion(values).then((resultados) => {
-      res.send({
-        resultados: resultados
-      });
-    });
-  }
-  else if(req.body.section == 'Contexto'){
-    conexion.busqueda_contexto(values).then((resultados) => {
-      res.send({
-        resultados: resultados
-      });
-    });
-  }
-  else if(req.body.section == 'Temporalidad'){
-    conexion.busqueda_temporalidad(values).then((resultados) => {
-      res.send({
-        resultados: resultados
-      });
-    });
-  }
+    eval("conexion.busqueda_" + req.body.section.toLowerCase() + "(values).then((resultados) => {"
+      + " console.log(resultados);"
+      + " res.send({"
+        + " resultados: resultados"
+      + " });"
+    + " });")
 })
 
 RouterPrincipal.post("/user_investigation", (req, res) => {

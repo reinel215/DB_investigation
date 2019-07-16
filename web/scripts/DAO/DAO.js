@@ -40,6 +40,11 @@ const query_instituciones_usuario= 'SELECT Entidad_Institucional.nombre as insti
 //Busquedas segun seccion
 const query_busqueda_evento= 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Estadio_Aplicado ON Estadio_Aplicado.id_investigacion = Investigacion.id_investigacion JOIN Evento_Delimitado ON Evento_Delimitado.id_estadio_aplicado = Estadio_Aplicado.id_estadio_aplicado JOIN Evento ON Evento.id_evento = Evento_Delimitado.id_evento WHERE Evento.nombre LIKE $1 GROUP BY Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general';
 const query_busqueda_proyecto= 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Estadio_Aplicado ON Estadio_Aplicado.id_investigacion = Investigacion.id_investigacion WHERE Proyecto.identificacion LIKE $1 GROUP BY Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general';
+const query_busqueda_objetivo_general= 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto WHERE Investigacion.objetivo_general LIKE $1 GROUP BY Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general';
+const query_busqueda_pregunta_investigacion= 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto WHERE Investigacion.pregunta_investigacion LIKE $1 GROUP BY Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general';
+const query_busqueda_entorno_investigacion= 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Entorno_Investigacion ON Entorno_Investigacion.id_investigacion = Investigacion.id_investigacion WHERE Entorno_Investigacion.descripcion LIKE $1 GROUP BY Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general';
+const query_busqueda_contexto= 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Contexto ON Contexto.id_contexto = Investigacion.id_contexto WHERE Contexto.concepcion LIKE $1 GROUP BY Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general';
+const query_busqueda_temporalidad= 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Temporalidad ON Temporalidad.id_temporalidad = Investigacion.id_temporalidad WHERE Temporalidad.descripcion LIKE $1 GROUP BY Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general';
 
 
 
@@ -55,8 +60,8 @@ const query_informe_calidad = ("SELECT 'No divaga' as item, cast((SELECT count(C
 "SELECT 'Fuentes variadas' as item, cast((SELECT count(A.id_Base_Noologica) FROM Base_Noologica as A WHERE (SELECT count(Unidad_Informacion.id_unidad_informacion) FROM Unidad_Informacion WHERE Unidad_Informacion.id_proyecto = $1 AND Unidad_Informacion.id_Base_Noologica = A.id_base_Noologica) > 0) as float)/cast((SELECT count(Base_Noologica.id_base_noologica) FROM Base_Noologica) as float) as valor"
 + " UNION " +
 "SELECT 'Conceptualiza los eventos' as item, cast((SELECT count(Evento.id_evento) FROM Evento JOIN Evento_Delimitado ON Evento_Delimitado.id_evento = Evento.id_evento JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado JOIN Investigacion ON Investigacion.id_investigacion = Estadio_Aplicado.id_investigacion JOIN Direccion_Uso ON Direccion_Uso.id_entidad = Evento_Delimitado.id_evento_delimitado JOIN Cita ON Cita.id_direccion_uso = Direccion_Uso.id_direccion_uso JOIN Unidad_Informacion ON Unidad_Informacion.id_unidad_informacion = Cita.id_unidad_informacion WHERE Cita.id_categoria_uso = 3 AND Unidad_Informacion.id_proyecto = $1) as float)/cast((SELECT count(Evento.id_evento) FROM Evento JOIN Evento_Delimitado ON Evento_Delimitado.id_evento = Evento.id_evento JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado WHERE Estadio_Aplicado.id_investigacion = $1) as float) as valor"
-//+ " UNION " +
-//"SELECT 'Eventos completos' as item, cast((SELECT count(Evento.id_evento) FROM Evento JOIN Evento_Delimitado ON Evento_Delimitado.id_evento = Evento.id_evento JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado JOIN Estadio ON Estadio.id_estadio = Estadio_Aplicado.id_estadio JOIN Investigacion ON Investigacion.id_investigacion = Estadio_Aplicado.id_investigacion JOIN Modalidad ON Modalidad.id_modalidad = Investigacion.modalidad JOIN Estadio_Estructural ON Estadio_Estructural.id_modalidad = Modalidad.id_modalidad JOIN Estructura_Evento ON Estructura_Evento.id_estadio_estructural = Estadio_Estructural.id_estadio_estructural JOIN Clase_Evento_Estructural ON Clase_Evento_Estructural.id_clase_evento_Estructural = Estructura_Evento.id_clase_evento_estructural JOIN Clase_Evento ON Evento_Delimitado.id_clase_evento = Clase_Evento.id_clase_Evento WHERE Estadio_Aplicado.posicion = Estadio_Estructural.posicion AND  Clase_Evento.nombre = Clase_Evento_Estructural.nombre AND Investigacion.id_investigacion = $1) as float)/cast((SELECT count(A.id_Estadio_Estructural) FROM Estadio_Estructural as A JOIN Modalidad ON Modalidad.id_modalidad = A.id_modalidad JOIN Investigacion ON Investigacion.modalidad = Modalidad.id_modalidad WHERE Investigacion.id_investigacion = $1 AND(SELECT count(Estructura_Evento.id_Estructura_evento) FROM Estructura_Evento WHERE A.id_estadio_estructural = Estructura_Evento.id_estadio_estructural) > 0) as float) as valor"
++ " UNION " +
+"SELECT 'Eventos completos' as item, cast((SELECT count(Evento.id_evento) FROM Evento JOIN Evento_Delimitado ON Evento_Delimitado.id_evento = Evento.id_evento JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = Evento_Delimitado.id_estadio_aplicado JOIN Estadio ON Estadio.id_estadio = Estadio_Aplicado.id_estadio JOIN Investigacion ON Investigacion.id_investigacion = Estadio_Aplicado.id_investigacion JOIN Modalidad ON Modalidad.id_modalidad = Investigacion.modalidad JOIN Estadio_Estructural ON Estadio_Estructural.id_modalidad = Modalidad.id_modalidad JOIN Estructura_Evento ON Estructura_Evento.id_estadio_estructural = Estadio_Estructural.id_estadio_estructural JOIN Clase_Evento_Estructural ON Clase_Evento_Estructural.id_clase_evento_Estructural = Estructura_Evento.id_clase_evento_estructural JOIN Clase_Evento ON Evento_Delimitado.id_clase_evento = Clase_Evento.id_clase_Evento WHERE Estadio_Aplicado.posicion = Estadio_Estructural.posicion AND  Clase_Evento.nombre = Clase_Evento_Estructural.nombre AND Investigacion.id_investigacion = $1) as float)/cast((SELECT count(A.id_Estadio_Estructural) FROM Estadio_Estructural as A JOIN Modalidad ON Modalidad.id_modalidad = A.id_modalidad JOIN Investigacion ON Investigacion.modalidad = Modalidad.id_modalidad WHERE Investigacion.id_investigacion = $1 AND(SELECT count(Estructura_Evento.id_Estructura_evento) FROM Estructura_Evento WHERE A.id_estadio_estructural = Estructura_Evento.id_estadio_estructural) > 0) as float) as valor"
 + " UNION " +
 "SELECT 'Eventos tienen cuadro de operacionalizacion' as item, cast((SELECT count(A.id_evento_delimitado) FROM Evento_Delimitado as A JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = A.id_estadio_aplicado WHERE (SELECT count(sinergia.id_sinergia) FROM Sinergia  JOIN Aplicacion_Instrumental ON Aplicacion_Instrumental.id_sinergia = Sinergia.id_sinergia WHERE Sinergia.id_evento_delimitado = A.id_evento_delimitado) > 0 AND Estadio_Aplicado.id_investigacion = $1) as float)/cast((SELECT count(A.id_evento_delimitado) FROM Evento_Delimitado as A JOIN Estadio_Aplicado ON Estadio_Aplicado.id_estadio_aplicado = A.id_Estadio_Aplicado WHERE Estadio_Aplicado.id_investigacion = $1) as float) as valor"
 + " UNION " +
@@ -233,6 +238,318 @@ module.exports.default = class DAO {
         }
         this.client.end((err) => console.log('[+]disconnected - User Actions'));
         resolve(actions);
+      });
+    });
+  }
+
+  busqueda_entorno_investigacion(values) {
+    return new Promise((resolve, reject) => {
+      let investigations = [];
+      this.client.connect().catch((err) => {
+        console.log('[-]Error en client connect. /api/busqueda_evento \n');
+        console.log(err);
+        resolve(investigations);
+      });
+      let busqueda= '%' + values[0] + '%';
+      values = [busqueda];
+      //Validacion de ingreso.
+      this.client.query(query_busqueda_entorno_investigacion, values, (err, result) => {
+        if (err) {
+          console.log('[-]Error en client query. /api/busqueda_evento investigaciones \n');
+          console.log(err);
+        }
+        else {
+          if (result.rows.length > 0)
+            for (let i = 0; i < result.rows.length; i++) {
+              let autores=[];
+              this.client.query(query_autores_investigacion, [result.rows[i].id_proyecto], (err, result) => {
+                if (err){
+                  console.log('[-]Error en client query. /api/user_investigations - autores \n');
+                  console.log(err);
+                }
+                else{
+                  for (let i=0; i<result.rows.length; i++){
+                    autores.push({
+                      nombres: result.rows[i].nombres,
+                      apellidos: result.rows[i].apellidos,
+                      tipo_usuario: result.rows[i].tipo_usuario
+                    })
+                  }
+                }
+              });
+              investigations.push({
+                identificacion: result.rows[i].identificacion,
+                id_proyecto: result.rows[i].id_proyecto,
+                pregunta_investigacion: result.rows[i].pregunta_investigacion,
+                calidad: result.rows[i].calidad,
+                objetivo_general: result.rows[i].objetivo_general,
+                autores: autores
+              });
+              console.log(investigations);
+            }
+        }
+        this.client.end((err) => console.log('[+]disconnected - User Investigations'));
+        resolve(investigations);
+      });
+    });
+  }
+
+  busqueda_temporalidad(values) {
+    return new Promise((resolve, reject) => {
+      let investigations = [];
+      this.client.connect().catch((err) => {
+        console.log('[-]Error en client connect. /api/busqueda_evento \n');
+        console.log(err);
+        resolve(investigations);
+      });
+      let busqueda= '%' + values[0] + '%';
+      values = [busqueda];
+      //Validacion de ingreso.
+      this.client.query(query_busqueda_temporalidad, values, (err, result) => {
+        if (err) {
+          console.log('[-]Error en client query. /api/busqueda_evento investigaciones \n');
+          console.log(err);
+        }
+        else {
+          if (result.rows.length > 0)
+            for (let i = 0; i < result.rows.length; i++) {
+              let autores=[];
+              this.client.query(query_autores_investigacion, [result.rows[i].id_proyecto], (err, result) => {
+                if (err){
+                  console.log('[-]Error en client query. /api/user_investigations - autores \n');
+                  console.log(err);
+                }
+                else{
+                  for (let i=0; i<result.rows.length; i++){
+                    autores.push({
+                      nombres: result.rows[i].nombres,
+                      apellidos: result.rows[i].apellidos,
+                      tipo_usuario: result.rows[i].tipo_usuario
+                    })
+                  }
+                }
+              });
+              investigations.push({
+                identificacion: result.rows[i].identificacion,
+                id_proyecto: result.rows[i].id_proyecto,
+                pregunta_investigacion: result.rows[i].pregunta_investigacion,
+                calidad: result.rows[i].calidad,
+                objetivo_general: result.rows[i].objetivo_general,
+                autores: autores
+              });
+              console.log(investigations);
+            }
+        }
+        this.client.end((err) => console.log('[+]disconnected - User Investigations'));
+        resolve(investigations);
+      });
+    });
+  }
+
+  busqueda_pregunta_investigacion(values) {
+    return new Promise((resolve, reject) => {
+      let investigations = [];
+      this.client.connect().catch((err) => {
+        console.log('[-]Error en client connect. /api/busqueda_evento \n');
+        console.log(err);
+        resolve(investigations);
+      });
+      let busqueda= '%' + values[0] + '%';
+      values = [busqueda];
+      //Validacion de ingreso.
+      this.client.query(query_busqueda_pregunta_investigacion, values, (err, result) => {
+        if (err) {
+          console.log('[-]Error en client query. /api/busqueda_evento investigaciones \n');
+          console.log(err);
+        }
+        else {
+          if (result.rows.length > 0)
+            for (let i = 0; i < result.rows.length; i++) {
+              let autores=[];
+              this.client.query(query_autores_investigacion, [result.rows[i].id_proyecto], (err, result) => {
+                if (err){
+                  console.log('[-]Error en client query. /api/user_investigations - autores \n');
+                  console.log(err);
+                }
+                else{
+                  for (let i=0; i<result.rows.length; i++){
+                    autores.push({
+                      nombres: result.rows[i].nombres,
+                      apellidos: result.rows[i].apellidos,
+                      tipo_usuario: result.rows[i].tipo_usuario
+                    })
+                  }
+                }
+              });
+              investigations.push({
+                identificacion: result.rows[i].identificacion,
+                id_proyecto: result.rows[i].id_proyecto,
+                pregunta_investigacion: result.rows[i].pregunta_investigacion,
+                calidad: result.rows[i].calidad,
+                objetivo_general: result.rows[i].objetivo_general,
+                autores: autores
+              });
+              console.log(investigations);
+            }
+        }
+        this.client.end((err) => console.log('[+]disconnected - User Investigations'));
+        resolve(investigations);
+      });
+    });
+  }
+
+  busqueda_contexto(values) {
+    return new Promise((resolve, reject) => {
+      let investigations = [];
+      this.client.connect().catch((err) => {
+        console.log('[-]Error en client connect. /api/busqueda_evento \n');
+        console.log(err);
+        resolve(investigations);
+      });
+      let busqueda= '%' + values[0] + '%';
+      values = [busqueda];
+      //Validacion de ingreso.
+      this.client.query(query_busqueda_contexto, values, (err, result) => {
+        if (err) {
+          console.log('[-]Error en client query. /api/busqueda_evento investigaciones \n');
+          console.log(err);
+        }
+        else {
+          if (result.rows.length > 0)
+            for (let i = 0; i < result.rows.length; i++) {
+              let autores=[];
+              this.client.query(query_autores_investigacion, [result.rows[i].id_proyecto], (err, result) => {
+                if (err){
+                  console.log('[-]Error en client query. /api/user_investigations - autores \n');
+                  console.log(err);
+                }
+                else{
+                  for (let i=0; i<result.rows.length; i++){
+                    autores.push({
+                      nombres: result.rows[i].nombres,
+                      apellidos: result.rows[i].apellidos,
+                      tipo_usuario: result.rows[i].tipo_usuario
+                    })
+                  }
+                }
+              });
+              investigations.push({
+                identificacion: result.rows[i].identificacion,
+                id_proyecto: result.rows[i].id_proyecto,
+                pregunta_investigacion: result.rows[i].pregunta_investigacion,
+                calidad: result.rows[i].calidad,
+                objetivo_general: result.rows[i].objetivo_general,
+                autores: autores
+              });
+              console.log(investigations);
+            }
+        }
+        this.client.end((err) => console.log('[+]disconnected - User Investigations'));
+        resolve(investigations);
+      });
+    });
+  }
+
+  busqueda_objetivo_general(values) {
+    return new Promise((resolve, reject) => {
+      let investigations = [];
+      this.client.connect().catch((err) => {
+        console.log('[-]Error en client connect. /api/busqueda_evento \n');
+        console.log(err);
+        resolve(investigations);
+      });
+      let busqueda= '%' + values[0] + '%';
+      values = [busqueda];
+      //Validacion de ingreso.
+      this.client.query(query_busqueda_objetivo_general, values, (err, result) => {
+        if (err) {
+          console.log('[-]Error en client query. /api/busqueda_evento investigaciones \n');
+          console.log(err);
+        }
+        else {
+          if (result.rows.length > 0)
+            for (let i = 0; i < result.rows.length; i++) {
+              let autores=[];
+              this.client.query(query_autores_investigacion, [result.rows[i].id_proyecto], (err, result) => {
+                if (err){
+                  console.log('[-]Error en client query. /api/user_investigations - autores \n');
+                  console.log(err);
+                }
+                else{
+                  for (let i=0; i<result.rows.length; i++){
+                    autores.push({
+                      nombres: result.rows[i].nombres,
+                      apellidos: result.rows[i].apellidos,
+                      tipo_usuario: result.rows[i].tipo_usuario
+                    })
+                  }
+                }
+              });
+              investigations.push({
+                identificacion: result.rows[i].identificacion,
+                id_proyecto: result.rows[i].id_proyecto,
+                pregunta_investigacion: result.rows[i].pregunta_investigacion,
+                calidad: result.rows[i].calidad,
+                objetivo_general: result.rows[i].objetivo_general,
+                autores: autores
+              });
+              console.log(investigations);
+            }
+        }
+        this.client.end((err) => console.log('[+]disconnected - User Investigations'));
+        resolve(investigations);
+      });
+    });
+  }
+
+  busqueda_evento(values) {
+    return new Promise((resolve, reject) => {
+      let investigations = [];
+      this.client.connect().catch((err) => {
+        console.log('[-]Error en client connect. /api/busqueda_evento \n');
+        console.log(err);
+        resolve(investigations);
+      });
+      let busqueda= '%' + values[0] + '%';
+      values = [busqueda];
+      //Validacion de ingreso.
+      this.client.query(query_busqueda_evento, values, (err, result) => {
+        if (err) {
+          console.log('[-]Error en client query. /api/busqueda_evento investigaciones \n');
+          console.log(err);
+        }
+        else {
+          if (result.rows.length > 0)
+            for (let i = 0; i < result.rows.length; i++) {
+              let autores=[];
+              this.client.query(query_autores_investigacion, [result.rows[i].id_proyecto], (err, result) => {
+                if (err){
+                  console.log('[-]Error en client query. /api/user_investigations - autores \n');
+                  console.log(err);
+                }
+                else{
+                  for (let i=0; i<result.rows.length; i++){
+                    autores.push({
+                      nombres: result.rows[i].nombres,
+                      apellidos: result.rows[i].apellidos,
+                      tipo_usuario: result.rows[i].tipo_usuario
+                    })
+                  }
+                }
+              });
+              investigations.push({
+                identificacion: result.rows[i].identificacion,
+                id_proyecto: result.rows[i].id_proyecto,
+                pregunta_investigacion: result.rows[i].pregunta_investigacion,
+                calidad: result.rows[i].calidad,
+                objetivo_general: result.rows[i].objetivo_general,
+                autores: autores
+              });
+              console.log(investigations);
+            }
+        }
+        this.client.end((err) => console.log('[+]disconnected - User Investigations'));
+        resolve(investigations);
       });
     });
   }

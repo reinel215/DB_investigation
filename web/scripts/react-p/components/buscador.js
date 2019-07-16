@@ -131,15 +131,13 @@ class Buscador extends Component {
                                             <a class="nav-link"><span class={Evento} id="Evento" onClick={this.handle_section}>Evento_Abordado</span></a>
                                         </li>
                                         <li class="nav-item dropdown">
-                                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <span class="badge badge-secondary">Investigacion</span>
-                                            </a>
-                                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                                <a class="dropdown-item"><span class={Objetivo_General} id="Objetivo_General" onClick={this.handle_section}>Objetivo General</span></a>
-                                                <a class="dropdown-item"><span class={Pregunta_Investigacion} id="Pregunta_Investigacion" onClick={this.handle_section}>Pregunta investigacion</span></a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item"><span class={Entorno_Investigacion} id="Entorno_Investigacion" onClick={this.handle_section}>Entorno Investigacion</span></a>
-                                            </div>
+                                            <a class="nav-link"><span class={Objetivo_General} id="Objetivo_General" onClick={this.handle_section}>Objetivo General</span></a>
+                                        </li>
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link"><span class={Pregunta_Investigacion} id="Pregunta_Investigacion" onClick={this.handle_section}>Pregunta investigacion</span></a>
+                                        </li>
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link"><span class={Entorno_Investigacion} id="Entorno_Investigacion" onClick={this.handle_section}>Entorno Investigacion</span></a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link"><span class={Contexto} id="Contexto" onClick={this.handle_section}>Contexto</span></a>
