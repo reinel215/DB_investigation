@@ -1,10 +1,16 @@
 const officegen = require('officegen');
+var fs = require('fs');
 
 module.exports.default = class Generador_Documento {
 
     constructor(proyecto, direccion) {
         this.proyecto = proyecto;
-        this.direccion = direccion;
+        let conversion = direccion.split('/');
+        let ruta='';
+        for(let i= 0; i< conversion.length-1; i++){
+            ruta= ruta + '/' + conversion[i];
+        }
+        this.direccion = ruta;
     }
 
     generar_informe() {
@@ -106,7 +112,7 @@ module.exports.default = class Generador_Documento {
                     pObj.addLineBreak();
                     pObj.addText(cita.delimitacion, { font_face: 'Times New Roman', font_size: 12, underline: true });
                     pObj.addLineBreak();
-                    pObj.addText(cita.cita + '['+ unidad_info.cita_ref +']', { font_face: 'Times New Roman', font_size: 10 });
+                    pObj.addText(cita.cita + '[' + unidad_info.cita_ref + ']', { font_face: 'Times New Roman', font_size: 10 });
                     pObj.addLineBreak();
                 }
             });
@@ -177,7 +183,7 @@ module.exports.default = class Generador_Documento {
                             pObj.addLineBreak();
                             pObj.addText('terminos:' + item.categoria.terminos, { font_face: 'Times New Roman', font_size: 12 });
                             pObj.addLineBreak();
-                            pObj.addText('escala'+ item.categoria.escala, { font_face: 'Times New Roman', font_size: 12 });
+                            pObj.addText('escala' + item.categoria.escala, { font_face: 'Times New Roman', font_size: 12 });
                             pObj.addLineBreak();
                         });
                     });
@@ -189,10 +195,18 @@ module.exports.default = class Generador_Documento {
         pObj.addText('Bibliografia', { font_face: 'Times New Roman', font_size: 15, underline: true, bold: true });
         pObj.addLineBreak();
         this.proyecto.unidades_informacion.forEach((unidad_info) => {
-            pObj.addText(unidad_info.autor + ' . (' + unidad_info.fecha + '). ' + unidad_info.titulo + '[' + unidad_info.cita_ref +']', { font_face: 'Times New Roman', font_size: 12 });
+            pObj.addText(unidad_info.autor + ' . (' + unidad_info.fecha + '). ' + unidad_info.titulo + '[' + unidad_info.cita_ref + ']', { font_face: 'Times New Roman', font_size: 12 });
             pObj.addLineBreak();
         });
-        pObj.generate(this.direccion + 'informe.docx');
+
+        let out = fs.createWriteStream(this.direccion + 'example.docx');
+
+        out.on('error', function (err) {
+            console.log(err)
+        });
+
+        // Async call to generate the output file:
+        docx.generate(out);
     }
 
 }

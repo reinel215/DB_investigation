@@ -42,11 +42,11 @@ class Navbar extends Component {
                 Perfil
               </li>
             </Link>
-            <Link to='/home/logout' className="nav-link">
+            <a href='/home/logout' className="nav-link">
               <li className="nav-item text-light font-weight-bold">
                 Cerrar sesión
               </li>
-            </Link>
+            </a>
           </ul>
         </div>
       </nav>

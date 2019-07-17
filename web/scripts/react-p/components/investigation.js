@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 //Router para renderizar los componentes segun direccion de los mismos.
 import { Link } from 'react-router-dom';
 import ReporteCalidad from './ReporteCalidad';
-//const Office = require('../../generar_informe.js');
+//const Office = require('../../generar_informe.js').default;
 
 var linkUF;
 var linkINV;
