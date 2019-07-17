@@ -56,9 +56,6 @@ class UnidadInfo extends Component {
             if(this.state.unidades.length > 0){
                 content=(
                     <div className="container row w-75 h-75 p-2 contenedor-uf bg-dark content-extended pb-2">
-                        <Link to={this.state.link} className="nav-link button-exit">
-                            X
-                        </Link>
                         <div className="col-md-6 container overflow-auto section-left">
                             {
                                 this.state.unidades.map((unidad, i) => {
@@ -113,6 +110,9 @@ class UnidadInfo extends Component {
 
         return(
             <div className="Selection container-fluid d-flex justify-content-center align-items-center selection-bg">
+            <Link to={this.state.link} className="nav-link button-exit">
+                X
+            </Link>
                 {content}
             </div>
         )}

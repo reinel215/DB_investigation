@@ -45,6 +45,8 @@ class Investigation extends Component {
                 else
                     return null;
             }).then(json => {
+                console.log('informe:');
+                console.log(json);
                 //const documento= new Office(json.proyecto, fileselector.value);
                 //documento.generar_informe();    
             });

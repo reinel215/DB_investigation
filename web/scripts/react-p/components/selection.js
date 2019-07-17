@@ -47,9 +47,6 @@ class Selection extends Component {
                             })
                         }
                     </ol>
-                    <Link to='/home' className="nav-link button-exit">
-                        X
-                    </Link>
                     <div className="carousel-inner">
                         {
                             this.state.investigations.map((investigation, i) => {
@@ -78,8 +75,8 @@ class Selection extends Component {
                                             {
                                                 investigation.autores.map((autor, i) => {
                                                     return (<li className="list-group-item">
-                                                                <p>{autor.tipo_usuario} - {autor.nombres} {autor.apellidos}</p>
-                                                            </li>);
+                                                        <p>{autor.tipo_usuario} - {autor.nombres} {autor.apellidos}</p>
+                                                    </li>);
                                                 })
                                             }
                                             <li className="list-group-item">
@@ -121,6 +118,9 @@ class Selection extends Component {
 
         return (
             <div className="Selection container-fluid d-flex justify-content-center align-items-center selection-bg">
+                <Link to='/home' className="nav-link button-exit">
+                    X
+                    </Link>
                 {content}
             </div>
         )
