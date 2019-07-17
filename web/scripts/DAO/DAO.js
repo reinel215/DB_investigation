@@ -47,6 +47,9 @@ const query_busqueda_contexto= 'SELECT Proyecto.Identificacion, Proyecto.id_proy
 const query_busqueda_temporalidad= 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Temporalidad ON Temporalidad.id_temporalidad = Investigacion.id_temporalidad WHERE Temporalidad.descripcion LIKE $1 GROUP BY Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general';
 
 
+//Modificar
+const query_modificar_calidad = 'UPDATE Investigacion SET calidad = $1 WHERE Investigacion.id_investigacion = $2';
+
 
 const query_investigations_institucion = 'SELECT Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general FROM Proyecto JOIN Usuario_Proyecto ON Usuario_Proyecto.id_proyecto = Proyecto.id_proyecto JOIN Usuario ON Usuario.id_usuario = Usuario_Proyecto.id_usuario JOIN Investigacion ON Investigacion.id_proyecto = Proyecto.id_proyecto JOIN Registro_Institucional ON Registro_Institucional.id_usuario = Usuario.id_usuario JOIN Entidad_Institucional ON Entidad_Institucional.id_entidad_institucional = Registro_Institucional.id_entidad_institucional WHERE Entidad_Institucional.id_entidad_institucional IN (SELECT Entidad_Institucional.id_entidad_institucional FROM Entidad_Institucional JOIN Registro_Institucional ON Registro_Institucional.id_entidad_institucional = Entidad_Institucional.id_entidad_institucional WHERE Registro_Institucional.id_usuario = $1) GROUP BY Proyecto.Identificacion, Proyecto.id_proyecto, Investigacion.pregunta_investigacion, Investigacion.calidad, Investigacion.objetivo_general';
 
@@ -106,6 +109,19 @@ module.exports.default = class DAO {
         resolve(contador_proy);
       });
     });
+  }
+
+  modificar_calidad(values) {
+    this.client.connect().catch((err) => {
+      console.log('[-]Error en client connect. /api/modificar_calidad \n');
+      console.log(err);
+    });
+      this.client.query(query_modificar_calidad, values, (err, result) => {
+        console.log('[+]Reporte de modificacion calidad');
+        console.log(result);
+        console.log(err);
+        this.client.end((err) => console.log('[+]disconnected - modificar calidad'));
+      });
   }
 
   instituciones_usuario(values) {

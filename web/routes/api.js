@@ -34,6 +34,14 @@ RouterPrincipal.get("/user_info", async (req, res) => {
   });
 });
 
+RouterPrincipal.post("/modificar_calidad", (req, res) => {
+  console.log('[+]Entrada a modificar_Calidad');
+  const conexion = new DAO();
+  values = [req.body.calidad, req.body.id];
+  conexion.modificar_calidad(values);
+  res.send({});
+});
+
 RouterPrincipal.get("/user_actions", (req, res) => {
   console.log('[+]Entrada a user_Actions');
   const conexion = new DAO();
